@@ -19,7 +19,7 @@
 
         methods: {
             initDemos() {
-                document.querySelectorAll("pre").forEach(pre => {
+                document.querySelectorAll("pre.language-javascript").forEach(pre => {
                     if (pre.parentElement.classList.contains("live-code")) {
                         // we're already wrapped
                         return;
@@ -56,20 +56,41 @@
 
 
 <template>
-    <Layout class="doc-page">
-        <h1>
-            {{ $page.doc.title }}
-        </h1>
-        <div class="markdown" v-html="$page.doc.content" />
+    <Layout>
+        <article>
+            <header class="page-header">{{ $page.doc.title }}</header>
+            <div v-html="$page.doc.content" />
+        </article>
     </Layout>
 </template>
 
 
 <style lang="scss">
-    .doc-page {
+    $max-width: 1200px;
+    $nav-width: 180px;
+
+    article {
+        max-width: $max-width;
+        margin: 0 auto;
+        padding-left: $nav-width + 50px;
+        padding-top: 30px;
+        padding-right: 20px;
+
+        header {
+            background: #e4f2f4;
+            color: scale-color($color: #e4f2f4, $saturation: -30%, $lightness: -40%);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            font-size: 0.85em;
+            padding: 20px;
+            border-radius: 3px;
+            margin-bottom: 50px;
+        }
+
         .live-code {
             display: grid;
-            grid-template-columns: 600px 300px;
+            grid-template-columns: 1fr 300px;
             gap: 10px;
             margin: 2em 0;
 
@@ -83,7 +104,19 @@
                 height: 300px;
                 width: 300px;
                 border: none;
+                border-radius: 10px;
             }
+        }
+
+
+        h1:not(:first-child) {
+            margin-top: 3em;
+        }
+
+        p {
+            line-height: 150%;
+            max-width: 45em;
+            color: #333;
         }
     }
 </style>

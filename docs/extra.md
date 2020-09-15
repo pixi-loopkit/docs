@@ -1,22 +1,32 @@
 ---
-title: My pants are too big
-slug: pants
+title: Extra
+slug: extra
+order: 100
 ---
 
-Markdown content is markdowning
+# Easing
+
+Makes things ease-y (i'll show myself out)
+
+# RC
+
+RC stands for remote(-ish) control.
+
+# Sound
+
+When you want to react to sound
+
 
 ```javascript
 import {LoopKit, Graphics} from "pixi-loopkit";
 let kit = new LoopKit(".kit", {
-    bgColor: "#eee",
+    bgColor: "#fafafa",
 });
 
 let graphics = kit.graphics;
 graphics.lineStyle(3, "#666");
 graphics.drawRect(100.5, 100.5, 100, 100);
 ```
-
-
 
 ```javascript
 import {LoopKit, Graphics} from "pixi-loopkit";
@@ -32,7 +42,7 @@ class Square extends Graphics {
 }
 
 let kit = new LoopKit(".kit", {
-    bgColor: "#eee",
+    bgColor: "#fafafa",
     onFrame: () => {
         rect.rotation += 0.01;
     },

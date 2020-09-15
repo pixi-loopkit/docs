@@ -12,14 +12,13 @@ module.exports = {
             options: {
                 typeName: "Doc",
                 path: "./docs/**/*.md",
+                index: ["./docs/index.md"],
+                remark: {
+                    plugins: ["@gridsome/remark-prismjs"],
+                },
             },
         },
     ],
-    transformers: {
-        remark: {
-            plugins: ["@gridsome/remark-prismjs"],
-        },
-    },
     templates: {
         Doc: "/:slug",
     },
