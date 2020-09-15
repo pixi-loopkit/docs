@@ -1,0 +1,20 @@
+{
+  "name": "pixi-loopkit-docs",
+  "private": true,
+  "scripts": {
+    "serve": "gridsome develop",
+    "build": "gridsome build",
+    "explore": "gridsome explore"
+  },
+  "dependencies": {
+    "@gridsome/remark-prismjs": "^0.4.0",
+    "@gridsome/source-filesystem": "^0.6.2",
+    "@gridsome/transformer-remark": "^0.6.2",
+    "gridsome": "^0.7.0",
+    "pixi-loopkit": "^0.1.14"
+  },
+  "devDependencies": {
+    "node-sass": "^4.14.1",
+    "sass-loader": "^10.0.2"
+  }
+}
