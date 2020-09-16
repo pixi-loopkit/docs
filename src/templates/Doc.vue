@@ -26,7 +26,6 @@
                     }
 
                     let source = pre.textContent;
-
                     let container = document.createElement("div");
                     container.classList.add("live-code");
                     let iframe = document.createElement("iframe");
@@ -75,6 +74,23 @@
         padding-left: $nav-width + 50px;
         padding-top: 30px;
         padding-right: 20px;
+        color: #333;
+        margin-bottom: 50px;
+
+        p,
+        ul,
+        ol {
+            line-height: 150%;
+            max-width: 45em;
+        }
+
+        h1:not(:first-child) {
+            padding-top: 50px;
+        }
+
+        a {
+            color: #8ac9d4;
+        }
 
         header {
             background: #e4f2f4;
@@ -88,6 +104,11 @@
             margin-bottom: 50px;
         }
 
+        pre[class*="language-"] {
+            //background: none;
+            margin: 2em 0;
+        }
+
         .live-code {
             display: grid;
             grid-template-columns: 1fr 300px;
@@ -98,6 +119,13 @@
                 margin: 0;
                 font-size: 0.85em;
                 background: none;
+                line-height: 150%;
+
+                .line-numbers-rows {
+                    margin-top: -0.5em; // not sure why exactly
+                    line-height: 150%;
+                    border-right: none;
+                }
             }
 
             iframe {
@@ -106,17 +134,6 @@
                 border: none;
                 border-radius: 10px;
             }
-        }
-
-
-        h1:not(:first-child) {
-            margin-top: 3em;
-        }
-
-        p {
-            line-height: 150%;
-            max-width: 45em;
-            color: #333;
         }
     }
 </style>

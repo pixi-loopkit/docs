@@ -63,7 +63,11 @@ query Menu {
                         {{ section.title }}
                     </header>
                     <div>
-                        <g-link v-for="heading in section.subnav" :key="heading.path" :to="heading.path">
+                        <g-link
+                            v-for="(heading, idx) in section.subnav"
+                            :key="heading.path"
+                            :to="idx == 0 ? heading.path.split('#')[0] : heading.path"
+                        >
                             {{ heading.title }}
                         </g-link>
                     </div>
@@ -92,7 +96,7 @@ query Menu {
         left: 0;
         right: 0;
         bottom: 0;
-        position: absolute;
+        position: fixed;
         max-width: $max-width;
         margin: 0 auto;
         top: 0;

@@ -29,6 +29,15 @@
                     source += `let ${key} = dependencies['${key}'];\n`;
                 });
                 source += lines.join("\n");
+                source += `
+                    kit.stop();
+                    let engaged = false;
+                    kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
+                    kit.canvas.addEventListener("mousedown", () => {
+                        engaged = true;
+                        kit.ticker.started ? kit.stop() : kit.start();
+                    });
+                `;
                 eval(source);
             },
         };
