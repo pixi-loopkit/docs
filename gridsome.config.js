@@ -19,7 +19,4 @@ module.exports = {
             },
         },
     ],
-    templates: {
-        Doc: "/:slug",
-    },
 };

@@ -1,20 +1,14 @@
-<page-query>
-  query Doc ($path: String!) {
-    doc: doc (path: $path) {
-      title
-      path
-      content
-    }
-  }
-</page-query>
-
 <script>
     export default {
         metaInfo() {
             return {
-                title: this.$page.doc.title,
-                meta: [{key: "description", name: "description", content: this.$page.doc.description}],
+                title: this.doc.title,
+                meta: [{key: "description", name: "description", content: this.doc.description}],
             };
+        },
+
+        computed: {
+            doc: state => state.$context.doc,
         },
 
         methods: {
@@ -40,7 +34,7 @@
         },
 
         watch: {
-            $page(page) {
+            $context(page) {
                 window.setTimeout(() => {
                     this.initDemos();
                 }, 10);
@@ -57,8 +51,8 @@
 <template>
     <Layout>
         <article>
-            <header class="page-header">{{ $page.doc.title }}</header>
-            <div v-html="$page.doc.content" />
+            <header class="page-header">{{ doc.title }}</header>
+            <div v-html="doc.content" />
         </article>
     </Layout>
 </template>
@@ -71,7 +65,7 @@
     article {
         max-width: $max-width;
         margin: 0 auto;
-        padding-left: $nav-width + 50px;
+        padding-left: $nav-width + 30px;
         padding-top: 30px;
         padding-right: 20px;
         color: #333;
@@ -88,8 +82,49 @@
             padding-top: 50px;
         }
 
+        h1 {
+            font-size: 2em;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-top: 3em;
+        }
+
+        h3 {
+            font-size: 1em;
+            margin-top: 3em;
+        }
+
         a {
-            color: #8ac9d4;
+            color: #449dad;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 20px;
+            th {
+                text-align: left;
+                font-weight: normal;
+                color: #888;
+                text-transform: uppercase;
+                font-weight: 600;
+                font-size: 0.8em;
+                border-bottom: 1px solid #ccc;
+            }
+            td,
+            th {
+                padding: 10px 0;
+                padding-right: 40px;
+            }
+        }
+
+        blockquote {
+            padding: 0;
+            margin: 2em 0;
+            border-left: 5px solid #c9e5e9;
+            padding-left: 10px;
+            font-style: italic;
         }
 
         header {

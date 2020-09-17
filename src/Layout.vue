@@ -1,15 +1,17 @@
 
 <static-query>
 query Menu {
-  docs: allDoc {
+  nodes: allDoc {
     edges {
       node {
+        path
         slug
         title
         order
         headings {
           value
           anchor
+          depth
         }
       }
     }
@@ -27,19 +29,24 @@ query Menu {
         },
 
         mounted() {
-            this.$static.docs.edges.forEach(node => {
-                node = node.node;
+            this.$static.nodes.edges.forEach(node => {
+                let doc = node.node;
+                let leaf = doc.path.split("/").slice(-2, -1)[0];
+                doc.slug = doc.slug || leaf;
+
                 let headings = [];
-                node.headings.forEach(heading => {
-                    headings.push({
-                        title: heading.value,
-                        path: `/${node.slug}${heading.anchor}`,
-                    });
+                doc.headings.forEach(heading => {
+                    if (heading.depth == 1) {
+                        headings.push({
+                            title: heading.value,
+                            path: `/${doc.slug}${heading.anchor}`,
+                        });
+                    }
                 });
                 this.sections.push({
-                    order: node.order,
-                    title: node.title,
-                    slug: node.slug,
+                    order: doc.order,
+                    title: doc.title,
+                    slug: doc.slug,
                     subnav: headings,
                 });
             });
@@ -55,7 +62,6 @@ query Menu {
             <nav>
                 <g-link class="logo" to="/">
                     <img src="/logo.png" />
-                    <div>pixi-loopkit</div>
                 </g-link>
 
                 <section v-for="section in sections" :key="section.slug">
@@ -128,7 +134,6 @@ query Menu {
             img {
                 display: block;
                 width: 120px;
-                margin-bottom: 20px;
                 border-radius: 10px;
             }
         }

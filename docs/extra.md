@@ -1,7 +1,6 @@
 ---
 title: Extra
-slug: extra
-order: 100
+order: 1000
 ---
 
 # Easing
