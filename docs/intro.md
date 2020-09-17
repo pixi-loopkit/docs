@@ -38,16 +38,15 @@ let kit = new LoopKit(".kit", {
 // get direct access to the drawing surface
 // set line to be 3 pixels thick and turquoise
 // and draw a rectangle (x, y, width, height), and mind the half-pixel
-let graphics = kit.graphics;
-graphics.lineStyle(3, "turquoise");
-graphics.drawRect(100.5, 100.5, 100, 100);
+kit.graphics.lineStyle(3, "turquoise");
+kit.graphics.drawRect(100.5, 100.5, 100, 100);
 ```
 
-`kit.graphics` is a thinly wrapped [Pixi.js' Graphics](http://pixijs.download/release/docs/PIXI.Graphics.html) object that you can use to directly draw on. Check out [Pixi's documentation](http://pixijs.download/release/docs/PIXI.Graphics.html) for full details. In essence it can do lines, squares, circles, ellipses, arcs, bezier curves, as well as you can nest graphics into other graphics (more on that later). Since Pixi itself is sitting on top of WebGL2, you can also do shaders and whatnot!
+`kit.graphics` is a thinly wrapped [Pixi.js' Graphics](http://pixijs.download/release/docs/PIXI.Graphics.html) object that you can use to directly draw on the canvas. It can do lines, squares, circles, ellipses, arcs, bezier curves, and you can nest graphics into other graphics as well (more on that later!). Since Pixi itself is sitting on top of WebGL2, you can also do shaders and whatnot. Check out [Pixi's documentation](http://pixijs.download/release/docs/PIXI.Graphics.html) for full details.
 
 Loopkit adds one essential feature to Pixi's graphics: you can specify colors in any format you like. All colors in loopkit are [chroma.js](https://gka.github.io/chroma.js/) colors, allowing you to use symbolic names (like "red", or "fuchsia"), HSL (hue, saturation, lightness) triplets, blending, and everything else. It's a rather excellent library, so be sure to check out [their documentation](https://gka.github.io/chroma.js/)!
 
-> Keyboard shortcut! Click on the square above and then press the "p" button on keyboard. You should be offered to download a capture of what you're seeing. Loopkit has a built-in exporter that will allow you get your work from code into PNGs and GIFs in no time.
+> Keyboard shortcut time! Click on the square above and then press the "p" button on your keyboard. You should be offered to download a capture of what you're seeing. Loopkit has a built-in exporter that will allow you get your work from code into PNGs and GIFs in no time.
 
 ## Let's get moving
 
@@ -96,12 +95,12 @@ And we are off to the races!
 
 Jumping ahead a little, here's another keyboard shortcut: if you click on the two squares above, and hit Shift+E on, you should be offered to download a `.tar` archive. Try it out!
 
-Hopefully your file manager will know how to deal with it TAR (it's essentially a zip). Once you've managed to unzip it, you'll see a `/frames` folder that contains all the individual frames, as well as in the root folder you'll find three shell scripts. The shell scripts use `ffmpeg` to convert the PNG frames into a looping GIF or, if the necessity calls for a video, a roughly 30 second mp4 video.
+Hopefully your file manager will know how to deal with a tar file (it's essentially a zip). Once you've managed to unzip it, you'll see a `/frames` folder that contains all the individual frames, as well as in the root folder you'll find three shell scripts. The shell scripts use `ffmpeg` to convert the PNG frames into a looping GIF or, if the necessity calls for a video, a roughly 30 second mp4 video.
 
-> One more keystroke! Try clicking into the squares and hitting "R" on the keyboard. This will render each frame on top of each other. That can be useful for debugging, as well as can render an interesting view of your animation. Press Shift+R if you'd like to download the image.
+> One more keystroke! Try clicking into the squares and hitting "r" on the keyboard. This will render each frame on top of each other. That can be useful for debugging, as well as can render an interesting view of your animation. Press Shift+R if you'd like to download the image.
 
 ## Onwards to loops
 
-Hopefully this brief overview has given you some idea as to what loopkit is about. To summarize - it's a tiny library (~50k unzipped), sitting on top of [Pixi.js](https://www.pixijs.com/), using [Chroma.js](https://gka.github.io/chroma.js/) and other helper libraries to create an environment where you can focus on creating. Keep reading to learn how to loop using normalized (0 to 1) values like a pro, how to switch loopkit between framecount mode and BPM (beats-per-minute) mode, how to attach sound, what's the best way to get high-resolution renders, and other nifty features. You might pick up a bit of maths as we move along as well!
+To summarize loopkit it's a tiny library (~50k unzipped), sitting on top of [Pixi.js](https://www.pixijs.com/), using [Chroma.js](https://gka.github.io/chroma.js/) and other helper libraries to create an environment where you can focus on creating. Keep reading to learn how to loop using normalized (0 to 1) values like a pro, how to switch loopkit between framecount mode and BPM (beats-per-minute) mode, how to attach sound, what's the best way to get high-resolution renders, and other nifty features. You might pick up a bit of maths as we move along as well!
 
 [Onwards to "Working with loops"](/loops)
