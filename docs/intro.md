@@ -6,9 +6,9 @@ slug: intro
 
 # What is pixi-loopkit
 
-pixi-loopkit, from here on out just "loopkit" makes it a good deal simpler to create looping gifs, visualisations that are timed to music, experiments that are easy to parametrize (more on that in props!), and more. In technical terms, it's a thin wrapper around [PIXI.js](https://pixijs.io/) with additional helper scripts and libraries. In a way, it's a platform to create stuff.
+Pixi-loopkit (loopkit from here on out) makes it a good deal simpler to create looping gifs, visualisations that are timed to music, experiments that are easy to parametrize (more on that in props!), and more. In technical terms, it's a thin wrapper around [PIXI.js](https://pixijs.io/) with additional helper scripts and libraries. In a way, it's a platform to create stuff.
 
-This documentation is a cross between a guide and technical documentation, a how to do things in general, and how to do things in loopkit in specific. Have a look around and who knows, maybe you'll have found yourself a new home!
+This documentation is a cross between a guide and technical documentation, a how to do things in general, and how to do things in loopkit in specific. Have a look around and who knows, maybe you will have found your new home!
 
 # Install & Run
 
@@ -93,7 +93,7 @@ kit.addChild(rect, rect2);
 
 And we are off to the races!
 
-Jumping ahead a little, here's another keyboard shortcut: if you click on the two squares above, and hit Shift+E on, you should be offered to download a `.tar` archive. Try it out!
+Jumping ahead a little, here's another keyboard shortcut: if you click on the two squares above and hit Shift+E on, you should be offered to download a `.tar` archive. Try it out!
 
 Hopefully your file manager will know how to deal with a tar file (it's essentially a zip). Once you've managed to unzip it, you'll see a `/frames` folder that contains all the individual frames, as well as in the root folder you'll find three shell scripts. The shell scripts use `ffmpeg` to convert the PNG frames into a looping GIF or, if the necessity calls for a video, a roughly 30 second mp4 video.
 
@@ -101,6 +101,6 @@ Hopefully your file manager will know how to deal with a tar file (it's essentia
 
 ## Onwards to loops
 
-To summarize loopkit it's a tiny library (~50k unzipped), sitting on top of [Pixi.js](https://www.pixijs.com/), using [Chroma.js](https://gka.github.io/chroma.js/) and other helper libraries to create an environment where you can focus on creating. Keep reading to learn how to loop using normalized (0 to 1) values like a pro, how to switch loopkit between framecount mode and BPM (beats-per-minute) mode, how to attach sound, what's the best way to get high-resolution renders, and other nifty features. You might pick up a bit of maths as we move along as well!
+To summarize, loopkit is a tiny library (~50k unzipped), sitting on top of [Pixi.js](https://www.pixijs.com/), using [Chroma.js](https://gka.github.io/chroma.js/) and other helper libraries to create an environment where you can focus on creating. Keep reading to learn how to loop using normalized (0..1) values like a pro, how to switch loopkit between framecount mode and BPM (beats-per-minute) mode, how to attach sound, what's the best way to get high-resolution renders, and other nifty features. You might pick up a bit of maths as we move along as well!
 
 [Onwards to "Working with loops"](/loops)

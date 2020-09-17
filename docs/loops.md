@@ -21,20 +21,20 @@ let kit = new LoopKit(".kit", {
         g.lineStyle(2, "#333");
 
         // `frame` goes from 0..1, and the math below is telling
-        // th square to go from 10 on the left to 10 on the right
+        // the square to go from 10 on the left to 10 on the right
         let x = 10 + frame * (kit.width - 100 - 20);
         g.drawRect(x, 100.5, 100, 100);
     },
 });
 ```
 
-It takes our square to move from left to right about 2 seconds, and then the animation starts over.
+The code above moves a square from left to right about 2 seconds, and then the animation starts over.
 Here's how it works:
 
-1. The refresh rate for PIXI animations is roughly  60fps (frames per second) - quite enough to create fluid animation. The framerate will drop if too much is going on and CPU/GPU is struggling.
-1. When initializing loopkit, we can specify the number of frames we want for our loop (you can also change it on the fly, afterwards). The default is 60, which is equal to about a second of animation, but you can go down or up to any number. You will be picking the exact frame count based on how quickly you want your thing to animate, and also, if that's your goal,  taking into consideration the size of the resulting animated GIF.
+1. The refresh rate for PIXI animations is roughly  60fps (frames per second) - quite enough to create fluid animation. At 120 frames that we've specified, we have twice the time, thus two seconds. The framerate will drop if too much is going on and CPU/GPU is struggling.
+1. If you don't specify, loopkit will assume 60 frames per loop. You can change that on init as well as on the fly!  You will be picking the exact frame count based on how quickly you want your thing to animate, and also, if that's your goal,  taking into consideration the size of the resulting animated GIF.
 1. The `frame` variable that gets passed into the `onFrame` callback is a normalized value that goes from 0 to 1, regardless of how many frames our loop has. So, for example, if our loop is 60 frames, 0 will correspond to the first frame, and 1 will correspond to the 59th frame (60th frame is the first frame of the next loop).
-1. `g`, on the other hand, is just a pointer to `kit.graphics` - so you can do your drawing straight onto kit, if you'd choose so.
+1. The first param, `g`, is just a pointer to `kit.graphics` - so you can do your drawing straight onto kit.
 
 # A continuous loop!
 
@@ -131,7 +131,9 @@ kit.addChild(rect);
 If not for the colors resetting back to their previous values, the motion once again looks continuous (magic!)
 
 > Here's another keyboard shortcut: if you click into the square and pause it (you can pause/unpause with the Spacebar),
-using Left/Right arrows will go between frames, 10 at a time. Shift+Left/Right will move one frame at a time. Try to find the exact spot where the loop ends (hint, at fram 0 the top edge is red). Also, try hitting the R button - pretty cool what a simple square can do, right?
+using Left/Right arrows will go between frames, 10 at a time. Shift+Left/Right will move one frame at a time. Try to find the exact spot where the loop ends (hint, at fram 0 the top edge is red).
+
+> Also try hitting the R button - pretty cool what a simple square can do, eh?
 
 
 ### Chasing siblings
