@@ -14,15 +14,16 @@
 
         computed: {
             doc: state => state.$context.doc,
+            content: state => state.doc.content,
         },
 
         methods: {
             initDemos() {
                 window.PIXI = require("pixi.js");
                 window.demos = this.demos;
-                let loopkit = require("pixi-loopkit");
                 // make all loopkit object accessible on the top level, so that our fake
                 // `import {Banaan} from "pixi-loopkit"` imports in source work without importing
+                let loopkit = require("pixi-loopkit");
                 Object.assign(window, loopkit);
 
                 document.querySelectorAll("pre.language-javascript").forEach(pre => {
@@ -50,8 +51,9 @@
                     source = lines.join("\n");
 
                     // point our universal kit, to uniquely generated random hash
-                    source = source.replace(".kit", `.demo-${id}`);
+                    source = source.replace(/\.kit/g, `.demo-${id}`);
 
+                    // add our local magic for usable demos
                     source = `
                         function demo${id}() {
                             ${source}
@@ -84,11 +86,11 @@
         },
 
         watch: {
-            $context(page) {
-                window.setTimeout(() => {
+            content(content) {
+                this.$nextTick(() => {
                     this.cleanup();
                     this.initDemos();
-                }, 10);
+                });
             },
         },
 
