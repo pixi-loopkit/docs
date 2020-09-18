@@ -6,6 +6,11 @@
                 meta: [{key: "description", name: "description", content: this.doc.description}],
             };
         },
+        data() {
+            return {
+                demos: [],
+            };
+        },
 
         computed: {
             doc: state => state.$context.doc,
@@ -13,6 +18,13 @@
 
         methods: {
             initDemos() {
+                window.PIXI = require("pixi.js");
+                window.demos = this.demos;
+                let loopkit = require("pixi-loopkit");
+                // make all loopkit object accessible on the top level, so that our fake
+                // `import {Banaan} from "pixi-loopkit"` imports in source work without importing
+                Object.assign(window, loopkit);
+
                 document.querySelectorAll("pre.language-javascript").forEach(pre => {
                     if (pre.parentElement.classList.contains("live-code")) {
                         // we're already wrapped
@@ -22,20 +34,59 @@
                     let source = pre.textContent;
                     let container = document.createElement("div");
                     container.classList.add("live-code");
-                    let iframe = document.createElement("iframe");
-                    let toBase = encodeURIComponent(btoa(source));
-                    iframe.setAttribute("src", `/demo?${toBase}`);
+
+                    let demoBox = document.createElement("div");
+                    demoBox.classList.add("demo");
+                    let id = Math.round(Math.random() * 999999).toString(36);
+                    demoBox.classList.add(`demo-${id}`);
 
                     pre.replaceWith(container);
+                    container.appendChild(demoBox);
                     container.appendChild(pre);
-                    container.appendChild(iframe);
+
+                    let lines = source.split(/\n/g);
+                    // filter out imports as those are allowed only in modules
+                    lines = lines.filter(line => line.indexOf("import") != 0);
+                    source = lines.join("\n");
+
+                    // point our universal kit, to uniquely generated random hash
+                    source = source.replace(".kit", `.demo-${id}`);
+
+                    source = `
+                        function demo${id}() {
+                            ${source}
+                            kit.stop();
+                            let engaged = false;
+                            kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
+                            kit.canvas.addEventListener("mousedown", () => {
+                                engaged = true;
+                                kit.ticker.started ? kit.stop() : kit.start();
+                            });
+
+                            // push into global so that we can destroy them properly once done
+                            window.demos.push(kit);
+                        }
+                        demo${id}();
+                    `;
+                    let script = document.createElement("script");
+                    script.innerHTML = source;
+                    document.body.appendChild(script);
                 });
+            },
+
+            cleanup() {
+                this.demos.forEach(kit => {
+                    // can has cleanup
+                    kit.destroy();
+                });
+                this.demos = [];
             },
         },
 
         watch: {
             $context(page) {
                 window.setTimeout(() => {
+                    this.cleanup();
                     this.initDemos();
                 }, 10);
             },
@@ -43,6 +94,10 @@
 
         mounted() {
             this.initDemos();
+        },
+
+        beforeDestroy() {
+            this.cleanup();
         },
     };
 </script>
@@ -59,115 +114,24 @@
 
 
 <style lang="scss">
-    $max-width: 1200px;
-    $nav-width: 180px;
+    .live-code {
+        margin: 2em 0;
+        position: relative;
 
-    article {
-        max-width: $max-width;
-        margin: 0 auto;
-        padding-left: $nav-width + 30px;
-        padding-top: 30px;
-        padding-right: 20px;
-        color: #333;
-        margin-bottom: 50px;
+        .demo {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 300px;
+            width: 300px;
+            border: none;
+            border-radius: 10px;
+            user-select: none;
+            overflow: hidden;
 
-        p,
-        ul,
-        ol {
-            line-height: 150%;
-            max-width: 45em;
-        }
-
-        h1:not(:first-child) {
-            padding-top: 50px;
-        }
-
-        h1 {
-            font-size: 2em;
-        }
-
-        h2 {
-            font-size: 1.5em;
-            margin-top: 3em;
-        }
-
-        h3 {
-            font-size: 1em;
-            margin-top: 3em;
-        }
-
-        a {
-            color: #449dad;
-        }
-
-        table {
-            border-collapse: collapse;
-            margin: 20px;
-            th {
-                text-align: left;
-                font-weight: normal;
-                color: #888;
-                text-transform: uppercase;
-                font-weight: 600;
-                font-size: 0.8em;
-                border-bottom: 1px solid #ccc;
-            }
-            td,
-            th {
-                padding: 10px 0;
-                padding-right: 40px;
-            }
-        }
-
-        blockquote {
-            padding: 0;
-            margin: 2em 0;
-            border-left: 5px solid #c9e5e9;
-            padding-left: 10px;
-            font-style: italic;
-        }
-
-        header {
-            background: #e4f2f4;
-            color: scale-color($color: #e4f2f4, $saturation: -30%, $lightness: -40%);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-            font-size: 0.85em;
-            padding: 20px;
-            border-radius: 3px;
-            margin-bottom: 50px;
-        }
-
-        pre[class*="language-"] {
-            //background: none;
-            margin: 2em 0;
-        }
-
-        .live-code {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 10px;
-            margin: 2em 0;
-
-            pre {
-                margin: 0;
-                font-size: 0.85em;
-                background: none;
-                line-height: 150%;
-
-                .line-numbers-rows {
-                    margin-top: -0.5em; // not sure why exactly
-                    line-height: 150%;
-                    border-right: none;
-                }
-            }
-
-            iframe {
-                height: 300px;
-                width: 300px;
-                border: none;
-                border-radius: 10px;
+            canvas:focus {
+                outline: none;
+                // box-shadow: 0 0 0px 3px white, 0 0 0px 5px #aaa;
             }
         }
     }

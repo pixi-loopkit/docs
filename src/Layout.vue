@@ -89,14 +89,6 @@ query Menu {
     $max-width: 1200px;
     $nav-width: 180px;
 
-    body {
-        font-family: Roboto, sans-serif;
-        margin: 0;
-    }
-
-    * {
-        box-sizing: border-box;
-    }
 
     .actions-panel {
         left: 0;
@@ -144,12 +136,12 @@ query Menu {
 
             header {
                 text-transform: uppercase;
-                font-size: 12px;
-                letter-spacing: 0.025em;
+                font-size: 13px;
+                letter-spacing: 0.04em;
                 font-weight: 600;
                 color: #999;
-                padding-bottom: 16px;
-                padding-top: 32px;
+                padding-bottom: 13px;
+                padding-top: 18px;
             }
 
             a {
@@ -157,6 +149,7 @@ query Menu {
                 display: block;
                 text-decoration: none;
                 color: #333;
+                font-size: 14px;
 
                 &.active--exact {
                     color: #30b8ce;

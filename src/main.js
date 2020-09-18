@@ -4,6 +4,7 @@
 import DefaultLayout from "~/Layout.vue";
 import "prismjs/themes/prism.css";
 import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+import "~/main.scss";
 
 export default function(Vue, {router, head, isClient}) {
     // Set default layout as a global component

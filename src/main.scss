@@ -1,0 +1,129 @@
+$max-width: 1200px;
+$nav-width: 180px;
+$content-max: 800px;
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Fira Sans", sans-serif;
+    margin: 0;
+}
+
+article {
+    max-width: $max-width;
+    margin: 0 auto;
+    padding-left: $nav-width + 30px;
+    padding-top: 30px;
+    padding-right: 20px;
+    color: #333;
+    margin-bottom: 50px;
+
+    p,
+    ul,
+    ol {
+        line-height: 150%;
+        max-width: $content-max;
+    }
+
+    h1:not(:first-child) {
+        padding-top: 50px;
+    }
+
+    h1 {
+        font-size: 2em;
+        font-weight: 600;
+    }
+
+    h2 {
+        font-size: 1.5em;
+        margin-top: 3em;
+    }
+
+    h3 {
+        font-size: 1em;
+        margin-top: 3em;
+    }
+
+    a {
+        color: #449dad;
+    }
+
+    table {
+        border-collapse: collapse;
+        margin: 20px;
+        th {
+            text-align: left;
+            font-weight: normal;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 0.8em;
+            border-bottom: 1px solid #ccc;
+        }
+        td,
+        th {
+            padding: 10px 0;
+            padding-right: 40px;
+        }
+    }
+
+    blockquote {
+        padding: 0;
+        margin: 2em 0;
+        border-left: 5px solid #c9e5e9;
+        padding-left: 10px;
+        font-style: italic;
+    }
+
+    header {
+        background: #e4f2f4;
+        color: scale-color($color: #e4f2f4, $saturation: -30%, $lightness: -40%);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+        font-size: 0.85em;
+        padding: 20px;
+        border-radius: 3px;
+        margin-bottom: 50px;
+    }
+
+    pre,
+    pre[class*="language-"] {
+        padding: 10px;
+        margin: 2em 0;
+        font-size: 15px;
+        max-width: $content-max;
+    }
+
+    pre[class*="language-"],
+    code,
+    code[class*="language-"] {
+        font-family: "Inconsolata", monospace;
+    }
+
+    code {
+        background: #eee;
+        padding: 3px;
+    }
+
+    .live-code {
+        code {
+            padding: 0;
+        }
+
+        pre {
+            margin: 0;
+            background: none;
+            line-height: 150%;
+            padding: 0;
+
+            .line-numbers-rows {
+                margin-top: -0.5em; // not sure why exactly
+                line-height: 150%;
+                border-right: none;
+            }
+        }
+    }
+}
