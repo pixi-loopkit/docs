@@ -174,7 +174,7 @@ let kit = new LoopKit(".kit", {
 
 We've picked some of the more playful ones, but each easing algorithm has its uses. `bounceOut` and `elasticOut` on the right side have both very fitting names. `expoOut` (second from left) is good for when you want to scooch real fast, and using in-out variant like here still gives us the smooth operator that it is.
 
-> Don't forget you can pause the motion and use Shift+Left and Shift+Right to go back and forth in time!
+> Don't forget you can pause the motion and use Shift+Left and Shift+Right to go back and forth in time! Also, try out pressing R to see the stills version of this experiment!
 
 Also, note how both, `backOut` in the middle, and `elasticOut` on the right overshot the target - they actually can be bigger than 1 (that might sometimes lead to unexpected consequences, but if your loop is continuous, most of the time will do exactly what you'd expect).
 
