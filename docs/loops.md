@@ -73,7 +73,7 @@ Without reading the code, one might think we are following an infinite flow of s
 
 The example above is one way of establishing continuity. Let's look at another one.
 
-## Continuous looping - simple rotation
+## Making use of radial symmetry
 
 Let's consider our square - since it has four sides, for us to establish a continuous loop, we'd just need to turn it 90 degrees.
 
@@ -132,44 +132,11 @@ If not for the colors resetting back to their previous values, the motion once a
 
 > Also try hitting the R button - pretty cool what a simple square can do, eh?
 
-# Thinking in normalized values (0..1)
 
-Before we go on, we should look at "normalization". If you are no stranger to working with normalized values, you can safely scroll down to the next section. If you're still not sure how to convert a `-50..300` range into `0..1`, read on - it will come handy in no time!
 
-Normalized ranges crop up everywhere because they allow you to go from any scale to any other scale. It's like a gradient  of sorts between a thing A and a thing B. The two things could be locations (like a cafeteria and your home), or they could be colors (say, red and blue), or they could be sizes, or anything else.
+## Making use of normalization to chase siblings
 
-When normalizing the range, we are creating a hybrid between A and B so that at zero we are 100 percent A and 0 percent B, and at one, it's the opposite - 100% B and 0% A. Here are a few examples of things transitioning between one end and the other.
-
-| What         | 0         | 0.5             | 1         |
-| ------------ | --------- | --------------- | --------- |
-| **location** | home      | half way there! | cafeteria |
-| **color**    | red       | violet          | blue      |
-| **elevator** | 3rd floor | 5th floor       | 7th floor |
-
-The basic math to get from anything to the other thing (called "interpolation") looks like this:
-
-```
-val = A * (1 - frame) + B * frame
-```
-
-In the beginning our frame is 0, and so we end up being 100% A. As the frame goes from 0 to 1, the values becomes less and less A and more and more B.
-
-Hope you're still with us! Let's see how that works out if we put in real numbers. Let's say our A is -50, and our B is 270, and we will try to go from A to B in five steps.
-
-| frame | A         | B         | result |
-| ----- | --------- | --------- | ------ |
-| 0     | -50 × 1   | 270 × 0   | -50    |
-| 0.2   | -50 × 0.8 | 270 × 0.2 | 14     |
-| 0.4   | -50 × 0.6 | 270 × 0.4 | 78     |
-| 0.6   | -50 × 0.4 | 270 × 0.6 | 142    |
-| 0.8   | -50 × 0.2 | 270 × 0.2 | 44     |
-| 1     | -50 × 0   | 270 × 1   | 270    |
-
-> Here the A and B are simple integers, but you could do the same with coordinates (you'd interpolate A.x -> B.x and A.y -> B.y), or colors (colors can be expressed as Red-Green-Blue or, even better, Hue-Saturation-Lightness; luckily [chroma does all the color blending for us](https://gka.github.io/chroma.js/#chroma-blend), so we don't have to worry about it; more on that later!).
-
-In essence, though, when you think about normalized values, the 0 means "all of the first thing and none of the second thing", and at 1 we are at "all of the second thing and none of the first thing".
-
-## Continuous looping 2 - using normalization to chase siblings
+> Normalized values is where you convert any arbitrary range to 0..1 interval. Check out [thinking in normalized values](/extra) if the concept is new to you!
 
 So let's use that sweet interpolation to get our squares chase thier siblings.
 In the example below, each square is trying to get to the position of the next element in the list (and the last one aims for the first). The squares have been laid out clockwise, starting at top-left!
@@ -212,9 +179,11 @@ let rectangles = [new Square(75, 75), new Square(225, 75), new Square(225, 225),
 kit.addChild(...rectangles);
 ```
 
-## Beyond linear interpolation - easing!
+## Adding easing for a more dynamic feel
 
-The movement above looks quite mechanical, doesn't it? The motion we have above is called "linear interpolation", meaning that we are moving from A to B at a steady, constant pace. Let's spiff it up by adding some easing (sometimes also called "tweening") to it!
+The movement above looks quite mechanical, doesn't it? The motion we have above is called "linear interpolation", meaning that we are moving from A to B at a steady, constant pace. Let's spiff it up by adding some easing to it!
+
+> If you are unfamiliar with easing or could use a quick refresher, check out ["What is easing?"](http://localhost:8080/extra#what-is-easing)
 
 ```javascript
 import {LoopKit, Graphics, Easing} from "pixi-loopkit";
@@ -222,9 +191,6 @@ import {LoopKit, Graphics, Easing} from "pixi-loopkit";
 class Square extends Graphics {
     constructor(x, y, size = 50) {
         super();
-
-        // Set the coordinates, but also store them separately
-        // as "original". check the onFrame for why!
         [this.x, this.y] = [x, y];
         [this.origX, this.origY] = [x, y];
         this.beginFill("#aaa");
@@ -236,17 +202,26 @@ let kit = new LoopKit(".kit", {
     bgColor: "#fafafa",
     onFrame: (g, frame) => {
         rectangles.forEach((rectangle, idx) => {
-            let actionFrame = Easing.expoInOut(frame - idx / 4 / 3);
+            // We are doing two things here:
+            // first we are applying expoInOut to the motion to
+            // make it perform exaggerated sweeps.
+            // Second, we are adding a bit of delay for each square
+            // to give it a sense of playful chaos/catch-up.
+            let actionFrame = Easing.expoInOut(frame - idx / 12);
 
+            // the rest is the same, except we use `actionFrame` to determine the position
             let next = rectangles[(idx + 1) % rectangles.length];
             rectangle.x = rectangle.origX * (1 - actionFrame) + next.origX * actionFrame;
             rectangle.y = rectangle.origY * (1 - actionFrame) + next.origY * actionFrame;
         });
     },
 });
-
-// We place the 4 rectangles clockwise. Normally you wouldn't hard-code
-// the coordinates like this, but we are just keeping things simple for now.
 let rectangles = [new Square(75, 75), new Square(225, 75), new Square(225, 225), new Square(75, 225)];
 kit.addChild(...rectangles);
 ```
+
+Not sure if this is much better, but it definitely is something! Playing with different easing alghorithms can lead to very different effects for the movement. The main takeaway here, though, is that you can alter any motion in the loop by using easing functions on the frame itself!
+
+We went over a few simple tricks how to close up the loop. Ultimately, figuring out the exact way how you want to loop is part of making your thing. So go out there and get cracking!
+
+[Onwards to "Reacting properties"](/props)
