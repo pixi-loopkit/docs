@@ -177,11 +177,11 @@ let rectangles = [new Square(75, 75), new Square(225, 75), new Square(225, 225),
 kit.addChild(...rectangles);
 ```
 
-## Adding easing for a more dynamic feel
+# Improving motion with easing
 
 The movement above looks quite mechanical, doesn't it? The motion we have above is called "linear interpolation", meaning that we are moving from A to B at a steady, constant pace. Let's spiff it up by adding some easing to it!
 
-> If you are unfamiliar with easing or could use a quick refresher, check out ["What is easing?"](http://localhost:8080/extra#what-is-easing)
+> If you are unfamiliar with easing or could use a quick refresher, check out ["What is easing?"](/extra#what-is-easing)
 
 ```javascript
 import {LoopKit, Graphics, Easing} from "pixi-loopkit";

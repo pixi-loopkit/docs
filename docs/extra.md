@@ -38,13 +38,13 @@ _Et voilà_, we have ourselves a working imaginary owen!
 
 > Here the A and B are simple integers, but you could do the same with coordinates (you'd interpolate A.x -> B.x and A.y -> B.y), or colors (colors can be expressed as Red-Green-Blue or, even better, Hue-Saturation-Lightness; luckily [chroma does all the color blending for us](https://gka.github.io/chroma.js/#chroma-blend), so we don't have to worry about it; more on that later!).
 
-In essence, when you think about normalized values, the 0 is "all of the first thing and none of the second thing", and at 1 we it is "all of the second thing and none of the first thing". The reason why normalized ranges are so handy is because you can express any transition using it!
+In essence, when you think about normalized values, the 0 is "all of the first thing and none of the second thing", and at 1 it is "all of the second thing and none of the first thing". The reason why normalized ranges are so handy is because you can express any transition using it!
 
-For loopkit, the number one place we'll find a normalized value is the `frame` variable you receive in the `onFrame` callback. 0 means "beginning of the loop", and the value will keep growing with each frame, till it reaches 1 and resets. If the loop has 60 frames, the number would increase by 1/60th each time. We don't have to worry about the exact value though, as we just keep the "all of A and none of B" and `frame` tells us how much of the one and not the other we want in this frame, exactly.
+For loopkit, the number one place we'll find a normalized value is the `frame` variable you receive in the `onFrame` callback. 0 means "beginning of the loop", and the value will keep growing with each frame, till it reaches 1 and resets. If the loop has 60 frames, the number would increase by 1/60th each time. We don't have to worry about the exact value though, as we just keep the "all of A and none of B" in mind, and `frame` tells us how much of the one and not the other we want in this frame, exactly.
 
 # What is easing?
 
-In the section above we look at expressing any range into 0..1. Then we split our normalized scale in equal parts and proceed going from A to B at a constant pace. That is called "linear interpolation". And it looks like the example on the right - the red ball is moving (don't forget to mouse over!) along the x axis with each frame, and the y coordinate half way in the loop is at 50 percent. You might also see where they got the "linear" in "linear interpolation" - it's a line!
+In the previous section we look at expressing any range into 0..1. Then we put the `frame` into our basic formula, and get a result. The change of the basic formula happens at a constant pace that is called "linear interpolation". And it looks like the example on the right - if you hover over the experiment, the red ball is moving along the x axis with each frame, and the y coordinate half way in the loop is at 50 percent. You might also see where they got the "linear" in "linear interpolation" - it's a line!
 
 ```javascript
 import {LoopKit} from "pixi-loopkit";
@@ -83,9 +83,11 @@ let kit = new LoopKit(".kit", {
 });
 ```
 
-While a totally solid way for getting from A to B, things in nature rarely have linear trajectories and so the motion does look, for a lack of better term, very computery. In nature, thanks to to gravity, friction, and inertia, we have swinging changes in speed.
+While a totally solid way for getting from A to B, things in nature rarely have linear trajectories and so the motion does look very _computery_. In nature, thanks to to gravity, friction, and inertia, we have swinging changes in speed.
 
-The code below is the exact copy of the code above, with just a tiny tweak in the getY function. Despite the fact that we are still getting from A to B in the same time, the way how it happens is quite different!
+## Going beyond linear
+
+The code below is the exact copy of the code above, with just a tiny tweak in the getY function. Despite the fact that we are still going from A to B in the same time, the way how it happens is quite different!
 
 ```javascript
 import {LoopKit} from "pixi-loopkit";
@@ -126,19 +128,26 @@ let kit = new LoopKit(".kit", {
 });
 ```
 
-> You don't have to pay attention to the exact math going on in easing. Knowing that if you wrap the frame with this or that easing function will give you a more natural feeling is quite sufficient. In loopkit you also don't have to worry about easing the position - we can ease the frame itself, instead. In practice it amounts to exactly the same, but is easier to think about!
+> You don't have to pay too close attention to the exact math going on in easing. Knowing that if you wrap the frame with this or that easing function will give you a more natural feeling, is quite sufficient. In loopkit you also don't have to worry about easing the position - we can ease the frame itself, instead. In practice it amounts to exactly the same, but is easier to think about!
 
-It might feel a bit like magic, but don't shy away, let's, just for a second, look at the numbers together! The `cubicInOut` function is essentally a convertor with a preference - you give it one number, and it returns you what it thinks of it, and it prefers to hang around the edges (just like we can see in the graph above). In the table below we've rounded the numbers down to significant digits, so it's not exactly precise, but check out how at 20% in the frame (0.2), the cubicInOut is still saying "Nah, we're just 3% in", and then it starts picking up speed, runs past the center (half matches prefectly), and at 70% (0.7) it's already saying, "I feel like we're roughly 90% done with this."
+It might feel a bit like magic, but don't shy away, let's, just for a second, look at the numbers together! The `cubicInOut` function is essentally a convertor with a preference - you give it one number, and it returns you what it thinks of it, and it prefers to hang around the edges (just like we can see in the graph above). In the table below we've rounded the numbers down to significant digits, so it's not exactly precise, but check out how at 20% in the frame (0.2), the `cubicInOut` is still saying "Nah, we're just 3% in", and then it starts picking up speed, runs past the center (half matches prefectly), and at 70% (0.7) it's already saying, "I feel like we're roughly 90% done with this."
 
 | value      | 0   | 0.1   | 0.2  | 0.3 | 0.4  | 0.5 | 0.6  | 0.7  | 0.8  | 0.9  | 1   |
 | ---------- | --- | ----- | ---- | --- | ---- | --- | ---- | ---- | ---- | ---- | --- |
 | cubicInOut | 0   | 0.004 | 0.03 | 0.1 | 0.26 | 0.5 | 0.74 | 0.89 | 0.97 | 0.99 | 1   |
 
-The `cubic` part of the function name comes from the fact that it does the frame to the power of three, or cube. There is also quad for 2^, quart for 4^, and quint for 5^. The general shape for all of these is pretty much the same, just the higher it goes, the more pronounced the bias becomes.
+The `cubic` part of the function name comes from the fact that it does the frame to the power of three, or cube. There is also quad for 2^, quart for 4^, and quint for 5^ (see [reference](/reference#easing) for details). The general shape for all of these is pretty much the same, just the higher it goes, the more pronounced the bias becomes.
 
 There are number of popular easing functions, and you can look at their motion on [easings.net](https://easings.net/). Loopkit supports all the well known ones, plus the two easing formulas from google's material design that aim to provide a natural-looking feel to motion.
 
-Let's look at a few easing algorithms side-by-side. We will skip the X axis and move the circles vertically.
+## The usual suspects
+
+
+Let's look at a few easing algorithms side-by-side. We will skip the X axis this time, and just move the circles vertically.
+
+> To get a closer look on the motion, click on the canvas to pause it, and use Shift+Left and Shift+Right to go back and forth in time!
+
+> Try out pressing R to see the stills version of this experiment!
 
 ```javascript
 import {LoopKit} from "pixi-loopkit";
@@ -172,10 +181,11 @@ let kit = new LoopKit(".kit", {
 });
 ```
 
-We've picked some of the more playful ones, but each easing algorithm has its uses. `bounceOut` and `elasticOut` on the right side have both very fitting names. `expoOut` (second from left) is good for when you want to scooch real fast, and using in-out variant like here still gives us the smooth operator that it is.
+Each easing algorithm has its uses. `bounceOut` and `elasticOut` on the right side have very fitting names. `expoOut` (second from left) is good for when you want to scooch real fast, and using the in-out variant like here still gives us the smooth operator that it is.
 
-> Don't forget you can pause the motion and use Shift+Left and Shift+Right to go back and forth in time! Also, try out pressing R to see the stills version of this experiment!
+Also, note how both, `backOut` in the middle, and `elasticOut` on the right overshot the target - they actually can be bigger than 1 (that might sometimes lead to unexpected consequences, but if your loop is continuous, most of the time will behave exactly as you'd expect, even if not considered).
 
-Also, note how both, `backOut` in the middle, and `elasticOut` on the right overshot the target - they actually can be bigger than 1 (that might sometimes lead to unexpected consequences, but if your loop is continuous, most of the time will do exactly what you'd expect).
+If you'd like to learn more about easing, try running a web search for "easing functions". To be honest, there aren't that many quality articles on the topic. Another pointer that might be of use - the original easing functions were written by Robert Penner. [His website](http://robertpenner.com/easing/) has a couple of links for further digging.
 
-If you'd like to learn more about easing, try running a web search for "easing functions". To be honest there aren't many quality articles on the topic. What also might be helpful, is that the original functions were written by Robert Penner. [His website](http://robertpenner.com/easing/) has a couple of links for further digging.
+
+> This explainer for easing is supplementary to ["Improving motion with easing"](/loops#improving-motion-with-easing) - if you haven't read it yet, that's the next step right here!
