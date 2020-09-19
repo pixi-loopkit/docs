@@ -112,11 +112,13 @@ article {
         padding: 3px;
     }
 
-    .live-code {
+    pre {
         code {
             padding: 0;
         }
+    }
 
+    .live-code {
         pre {
             margin: 0;
             background: none;
