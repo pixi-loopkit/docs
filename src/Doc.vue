@@ -27,12 +27,16 @@
                 Object.assign(window, loopkit);
 
                 document.querySelectorAll("pre.language-javascript").forEach(pre => {
+                    let source = pre.textContent;
                     if (pre.parentElement.classList.contains("live-code")) {
                         // we're already wrapped
                         return;
                     }
+                    if (!source.match(/\.kit/g)) {
+                        // not kit - nothing to do!
+                        return;
+                    }
 
-                    let source = pre.textContent;
                     let container = document.createElement("div");
                     container.classList.add("live-code");
 
@@ -55,21 +59,21 @@
 
                     // add our local magic for usable demos
                     source = `
-                        function demo${id}() {
-                            ${source}
-                            kit.stop();
-                            let engaged = false;
-                            kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
-                            kit.canvas.addEventListener("mousedown", () => {
-                                engaged = true;
-                                kit.ticker.started ? kit.stop() : kit.start();
-                            });
+                            function demo${id}() {
+                                ${source}
+                                kit.stop();
+                                let engaged = false;
+                                kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
+                                kit.canvas.addEventListener("mousedown", () => {
+                                    engaged = true;
+                                    kit.ticker.started ? kit.stop() : kit.start();
+                                });
 
-                            // push into global so that we can destroy them properly once done
-                            window.demos.push(kit);
-                        }
-                        demo${id}();
-                    `;
+                                // push into global so that we can destroy them properly once done
+                                window.demos.push(kit);
+                            }
+                            demo${id}();
+                        `;
                     let script = document.createElement("script");
                     script.innerHTML = source;
                     document.body.appendChild(script);
