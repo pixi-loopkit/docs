@@ -32,8 +32,8 @@ Here's how it works:
 
 1. The redraw rate is roughly 60fps (frames per second) - good enough to create a fluid animation. At 120 frames that we've specified, we have twice the time, thus two seconds.
 1. By default loopkit assumes 60 frames per loop, but you can change that on init as well as on the fly! You will be picking the exact frame count based on how quickly you want your thing to animate, and also, if that's your goal, taking into consideration the size of the resulting GIF.
-1. The `frame` variable that gets passed into the `onFrame` callback is a normalized value that always goes from 0 to 1 regardless of how many frames our loop has. So, for example, if our loop is 60 frames, 0 will correspond to the first frame, and 1 will correspond to the 59th frame (60th frame is the first frame of the next loop).
 1. The first param, `g`, is just a pointer to `kit.graphics` so that you can do your drawing straight onto the canvas.
+1. The second param `frame` is a normalized value that always goes from 0 to 1 regardless of how many frames our loop has. So, for example, if our loop is 60 frames, 0 will correspond to the first frame, and 1 will correspond to the 59th frame (60th frame is the first frame of the next loop).
 
 # A continuous loop
 
@@ -84,16 +84,15 @@ import {LoopKit, Graphics} from "pixi-loopkit";
 // the math ourselves (and later we will), but let's keep it simple for now.
 class Square extends Graphics {
     constructor() {
-        // call super so it initializes all its bits
         super();
         this.size = 100;
         let half = this.size / 2;
 
-        // we are drawing the rectangle so that the object anchor, the
+        // We are drawing the rectangle so that the object anchor, the
         // (0,0) coordinate for this graphic, is smack middle of the square
         this.moveTo(-half, -half); // upper left
 
-        // we will paint each edge in a different color, so we can
+        // We will paint each edge in a different color, so we can
         // better see what's going on
         this.lineStyle(5, "red");
         this.lineTo(half, -half); // top edge
@@ -112,11 +111,12 @@ class Square extends Graphics {
 let kit = new LoopKit(".kit", {
     bgColor: "#fafafa",
     onFrame: (g, frame) => {
+        // center the square
         [rect.x, rect.y] = [kit.width / 2, kit.height / 2];
 
-        // instead of incrementing the angle ad infinitum, we are
+        // Instead of incrementing the angle ad infinitum, we are
         // deterministically setting it to go from (0..1) * 90
-        // which means it will go from 0 to 90. exactly what we want
+        // which means it will go from 0 to 90. Exactly what we want!
         rect.angle = frame * 90;
     },
 });
@@ -125,21 +125,19 @@ let rect = new Square(150);
 kit.addChild(rect);
 ```
 
-If not for the colors resetting back to their previous values, the motion once again looks continuous (magic!)
+If not for the colors resetting back to their previous values, the motion once again looks continuous.
 
 > Here's another keyboard shortcut: if you click into the square and pause it (you can pause/unpause with the Spacebar),
 > using Left/Right arrows will go between frames, 10 at a time. Shift+Left/Right will move one frame at a time. Try to find the exact spot where the loop ends (hint, at the frame 0 the top edge is red).
 
-> Also try hitting the R button - pretty cool what a simple square can do, eh?
-
-
+> Also try hitting the R button - pretty cool what a simple square can do!
 
 ## Making use of normalization to chase siblings
 
 > Normalized values is where you convert any arbitrary range to 0..1 interval. Check out [thinking in normalized values](/extra) if the concept is new to you!
 
-So let's use that sweet interpolation to get our squares chase thier siblings.
-In the example below, each square is trying to get to the position of the next element in the list (and the last one aims for the first). The squares have been laid out clockwise, starting at top-left!
+So let's use that sweet interpolation to get our squares chase their siblings.
+In the example below, each square is trying to get to the position of the next element in the list (and the last one aims for the first). The squares have been laid out clockwise, starting at top-left.
 
 ```javascript
 import {LoopKit, Graphics} from "pixi-loopkit";
@@ -149,7 +147,7 @@ class Square extends Graphics {
         super();
 
         // Set the coordinates, but also store them separately
-        // as "original". check the onFrame for why!
+        // as "original". See the onFrame below for for why!
         [this.x, this.y] = [x, y];
         [this.origX, this.origY] = [x, y];
         this.beginFill("#aaa");
@@ -220,8 +218,8 @@ let rectangles = [new Square(75, 75), new Square(225, 75), new Square(225, 225),
 kit.addChild(...rectangles);
 ```
 
-Not sure if this is much better, but it definitely is something! Playing with different easing alghorithms can lead to very different effects for the movement. The main takeaway here, though, is that you can alter any motion in the loop by using easing functions on the frame itself!
+Not sure if this is much better, but it definitely is something! Playing with different easing alghorithms can lead to very different results for the movement. The main takeaway here, though, is that you can alter any motion in the loop by using easing functions on the frame itself!
 
 We went over a few simple tricks how to close up the loop. Ultimately, figuring out the exact way how you want to loop is part of making your thing. So go out there and get cracking!
 
-[Onwards to "Reacting properties"](/props)
+[Onwards to "Reactive properties"](/props)

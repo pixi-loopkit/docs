@@ -5,7 +5,7 @@ order: 100
 
 # At a glance
 
-A large part of creating stuff is the joy of switching away from the coding mode and into experimentation, where playfullness comes in and anything goes. It's making something and then thinking "I wonder what if..." and then quickly making it happen and seeing it in action. This is where reactive properties come in. They allow to keep your code sane.
+A large part of creating experimental stuff is the joy of switching away from the coding mode and into experimentation, where playfullness comes in and anything goes. It's making something and then thinking "I wonder what if..." and then quickly making it happen and seeing it in action. This is where reactive properties come in: they allow to keep your code sane.
 
 This first example is somewhat contrived, but try clicking into the square and use Left/Right arrow buttons to move around. You will notice that line width changes with the x position of the square. The `lineWidth` in the example is recalculated only when the properties it depends on change - thus reactive properties!
 
@@ -16,6 +16,7 @@ let props = Props({
     x: 150,
 
     // or they can be functions that depend on other props or external constants
+    // `state` that the function receives is our props object
     lineWidth: state => state.x / 5,
 });
 
@@ -43,18 +44,27 @@ kit.canvas.addEventListener("keydown", evt => {
 });
 ```
 
-## What's going on
+You could modify the `props` in many ways - you might choose to react to mouse actions, taps, microphone, a MIDI controller, or the accelerometer readings on the phone. When using props, everything will boil down to simple, flat structure that you can reference in your code. Being able to create properties that depend on other properties allows to create complex relationships between the attributes.
 
-You could modify the properties in many ways - you might choose to react to mouse actions, taps, microphone, a MIDI controller, or the accelerometer readings on the phone. When using props, everything will boil down to simple, flat props access that you can reference in your code. Being able to create props that depend on other props (that is, reactive props) allows to create complex relationships between the attributes.
 
-# Real life example
+# `scale` for going from norm to real values
 
-To gain a better understanding, let's look at a [live example here](https://tomstriker.org/x/ripple/ripple3/). Open it up and try pressing the numbers 1 to 5 on the keyboard. It will switch between different configurations. The props will show up in the top left corner. Note: clicking pauses the thing, you can resume by clicking again, or by pressing the Space bar. Heres the actual prop code:
+because min/max is always 0..1, but we might want different parametrization
+
+# Input events & props
+
+mouse movement, scroll, timers? what else can i think of without bringing in MIDI (will bring in midi at the end)
+
+# A realistic example
+
+(redo this whole lot as it's too much and not enough at the same time)
+
+To gain a better understanding, let's look at a [live example here](https://tomstriker.org/x/ripple/ripple3/). Open it up and try pressing the numbers 1 to 5 on the keyboard. It will switch between different configurations. The props will show up in the top left corner. Note: clicking pauses the visualization. You can resume motion by clicking again, or by pressing the Space bar. Here's the actual props part of the code:
 
 ```javascript
 import {LoopKit, Props, scale} from "pixi-loopkit";
 let props = Props({
-    // `scale` functions signature is scale(norm, min, max, default, step)
+    // `scale` function takes norm(norm, min, max, default, step)
     // which allows you to convert 0..1 to any range
     edges: state => scale(state.c1, 3, 200, 200) + scale(state.c1a, 0, 8),
     ripples: state => scale(state.c1b, 1, maxRipples, 20),

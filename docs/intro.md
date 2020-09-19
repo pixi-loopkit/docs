@@ -6,47 +6,49 @@ slug: intro
 
 # What is pixi-loopkit
 
-Pixi-loopkit (loopkit from here on out) makes it a good deal simpler to create looping gifs, visualisations that are timed to music, experiments that are easy to parametrize (more on that in props!), and more. In technical terms, it's a thin wrapper around [PIXI.js](https://pixijs.io/) with additional helper scripts and libraries. In a way, it's a platform to create stuff.
+Pixi-loopkit makes it simple to create looping gifs, visualisations that are timed to music, experiments that are easy to parametrize (more on that in props!), and all that in your browser and so mega-portable! It's a thin wrapper around [PIXI.js](https://pixijs.io/) with additional helper scripts and libraries, and it's a platform to create stuff.
 
-This documentation is a cross between a guide and technical documentation, a how to do things in general, and how to do things in loopkit in specific. Have a look around and who knows, maybe you will have found your new home!
+This documentation is a cross between a guide and technical documentation. A how to do things in general, and how to do things in loopkit in specific. Have a look around and who knows, maybe you will have found your new home!
+
+> All the examples of code build on previous ones, and to keep things concise, stuff that has been explained earlier is not reiterated. If you get lost, just scroll up to previous sections and see if maybe it's explained there!
 
 # Install & Run
 
-If you are using node package manager, loopkit is available on NPM:
+Loopkit is available on NPM:
 
 ```bash
 npm install pixi-loopkit
 ```
 
-Alternatively, you can download the minified version from github and just include that in your project (more info here later, right now though `npm` is the way to go).
+Alternatively, you can download the minified version from github and just include that in your project (more info here later; right now though `npm` is the way to go).
 
-# Hello World
+# Barebones example
 
-A minimal example to get us started. You should see a turquoise rectangle on the right.
+Here's a minimal example to get us started. You should see a turquoise rectangle on the right.
 
 ```javascript
-// get loopkit using ES6 imports
+// import loopkit, using ES6 imports
 import {LoopKit} from "pixi-loopkit";
 
-// create a new LoopKit instance. The first param, ".kit" is the CSS selector
-// of the container (you could also just pass in reference to the cavas itself).
-// The second param is options (like here - background color).
+// Create a new kit instance. The first param, ".kit" is the CSS selector
+// of the container (you can pass in a string, or a reference to the div.
+// The second param is {options} (here we're only specifyng background color).
 let kit = new LoopKit(".kit", {
     bgColor: "#fafafa",
 });
 
-// get direct access to the drawing surface
-// set line to be 3 pixels thick and turquoise
-// and draw a rectangle (x, y, width, height), and mind the half-pixel
-kit.graphics.lineStyle(3, "turquoise");
-kit.graphics.drawRect(100.5, 100.5, 100, 100);
+// Drawing straight on the kit's surface.
+// Setting line to be 4 pixels thick and turquoise,
+// and drawing a rectangle (x, y, width, height).
+kit.graphics.lineStyle(4, "turquoise");
+kit.graphics.drawRect(100, 100, 100, 100);
 ```
 
-`kit.graphics` is a thinly wrapped [Pixi.js' Graphics](http://pixijs.download/release/docs/PIXI.Graphics.html) object that you can use to directly draw on the canvas. It can do lines, squares, circles, ellipses, arcs, bezier curves, and you can nest graphics into other graphics as well (more on that later!). Since Pixi itself is sitting on top of WebGL2, you can also do shaders and whatnot. Check out [Pixi's documentation](http://pixijs.download/release/docs/PIXI.Graphics.html) for full details.
+`kit.graphics` is a thinly wrapped [Pixi.js' Graphics](http://pixijs.download/release/docs/PIXI.Graphics.html) object that you can use to directly draw on the canvas, as in the example above. It can do lines, squares, circles, ellipses, arcs, and bezier curves among other things, and you can nest graphics into other graphics as well (more on that later!) Since Pixi itself is sitting on top of WebGL2, you can also do shaders and whatnot. Check out [Pixi's documentation](http://pixijs.download/release/docs/PIXI.Graphics.html) for full details.
 
 Loopkit adds one essential feature to Pixi's graphics: you can specify colors in any format you like. All colors in loopkit are [chroma.js](https://gka.github.io/chroma.js/) colors, allowing you to use symbolic names (like "red", or "fuchsia"), HSL (hue, saturation, lightness) triplets, blending, and everything else. It's a rather excellent library, so be sure to check out [their documentation](https://gka.github.io/chroma.js/)!
 
-> Keyboard shortcut time! Click on the square above and then press the "p" button on your keyboard. You should be offered to download a capture of what you're seeing. Loopkit has a built-in exporter that will allow you get your work from code into PNGs and GIFs in no time.
+> Keyboard shortcut time! Click on the square above and then press the "p" button on your keyboard. You should be offered to download a capture of what you're seeing. Loopkit has a built-in exporter that will allow you get your work from code into PNGs and GIFs and MP4s in no time.
 
 ## Let's get moving
 
@@ -55,20 +57,21 @@ Let's add some movement! If you hover over the two squares below, they should st
 ```javascript
 import {LoopKit, Graphics} from "pixi-loopkit";
 
-// We can either draw straight onto the kit's surface, or we can work with
-// child nodes. One of the benefits of thinking in nested objects is that
+// Instead of drawing straight on the surface, we can also nest graphics
+// objects. One of the benefits of thinking in nested objects is that
 // it's easy to move them around, rotate and so on - same as you would
-// in HTML! We are defining a class for a "square" object here.
+// in HTML! Below is our version of a square that we will add to kit.
 class Square extends Graphics {
     constructor(size) {
+        // we are extending the Graphics class, so need to super()
         super();
 
-        // Simple center for demo purposes - our tiny canvas is 300x300
+        // Simple centering for demo purposes - our tiny canvas is 300x300
         [this.x, this.y] = [150, 150];
 
-        // Setting line 3px wide and magenta, with a bit of opacity
+        // Setting the line width and color, with a bit of opacity
         // It is also possible to use RGBA hex codes (among many others)
-        this.lineStyle(3, "magenta", 0.3);
+        this.lineStyle(4, "magenta", 0.3);
         this.drawRect(-size / 2, -size / 2, size, size);
     }
 }
@@ -77,30 +80,28 @@ class Square extends Graphics {
 let kit = new LoopKit(".kit", {
     bgColor: "#fafafa",
     onFrame: (g, frame) => {
-        // The onFrame property is new - it's called on every frame.
-        // In here we can do drawing, or changing things around.
-        // Currently, we are just turning the rects clockwise and counter
+        // The onFrame is called on every frame.
+        // In here we can draw, as well as perform any other changes.
+        // Currently, we are just turning the rects (defined below) clockwise and counter
         rect.rotation += 0.01;
         rect2.rotation -= 0.01;
     },
 });
 
-// Creating the squares we are changing above, and adding them to the kit
+// Creating the inner and outer square and adding them to the kit
 let rect = new Square(150);
 let rect2 = new Square(120);
 kit.addChild(rect, rect2);
 ```
 
-And we are off to the races!
+And we are off to the races! Jumping ahead a little, here's another keyboard shortcut: if you click on the two squares above and hit Shift+E on, you should be offered to download a `.tar` archive. Try it out!
 
-Jumping ahead a little, here's another keyboard shortcut: if you click on the two squares above and hit Shift+E on, you should be offered to download a `.tar` archive. Try it out!
+Tar files are archives just like zip, so if your file manager is lost, see if you can google up how to get it open. Once you've managed to unzip it, you'll see a `/frames` folder that contains all the individual frames, as well as in the root folder you'll find a bunch of shell scripts, running which will produce GIFs and MP4s. The scripts use `ffmpeg` to do all the heavy lifting.
 
-Hopefully your file manager will know how to deal with a tar file (it's essentially a zip). Once you've managed to unzip it, you'll see a `/frames` folder that contains all the individual frames, as well as in the root folder you'll find three shell scripts. The shell scripts use `ffmpeg` to convert the PNG frames into a looping GIF or, if the necessity calls for a video, a roughly 30 second mp4 video.
-
-> One more keystroke! Try clicking into the squares and hitting "r" on the keyboard. This will render each frame on top of each other. That can be useful for debugging, as well as can render an interesting view of your animation. Press Shift+R if you'd like to download the image.
+> One more keystroke! Click into the squares and hit "r" on the keyboard. This will run the full loop, and render all frames on top of each other. This can be useful for debugging, as well as for generating cool stills of your animation. Press Shift+R if you want to save the image.
 
 ## Onwards to loops
 
-To summarize, loopkit is a tiny library (~50k unzipped), sitting on top of [Pixi.js](https://www.pixijs.com/), using [Chroma.js](https://gka.github.io/chroma.js/) and other helper libraries to create an environment where you can focus on creating. Keep reading to learn how to loop using normalized (0..1) values like a pro, how to switch loopkit between framecount mode and BPM (beats-per-minute) mode, how to attach sound, what's the best way to get high-resolution renders, and other nifty features. You might pick up a bit of maths as we move along as well!
+In summary, loopkit is a tiny library (under ~50k unzipped), sitting on top of [Pixi.js](https://www.pixijs.com/), using [Chroma.js](https://gka.github.io/chroma.js/) and other helper libraries to create an environment where you can focus on creating. Keep reading to learn how to loop using normalized (0..1) values like a pro, how to switch loopkit between framecount mode and BPM (beats-per-minute) mode, how to attach sound, what's the best way to get high-resolution renders, and other nifty features. Or jump straight to the reference!
 
 [Onwards to "Working with loops"](/loops)
