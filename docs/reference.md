@@ -21,10 +21,8 @@ order: 500
         -   `{Function} onBeat` - gets called on each beat. The exact time will depend on `bpm` and `beatsPerLoop`.
         -   `{string} name` - used only when creating export scripts to simplify file management
 
--   **Usage:**
-    <p>
-        Create a new instance of loopkit.
-    </p>
+-   **Usage:**<br />
+    Create a new instance of loopkit.
 
 *   **Example:**
 
@@ -220,61 +218,200 @@ A convenience shortcut to `.graphics.children`
 -   **Usage**:<br />
     Stops loopkit, removes any internal listeners, calls PIXI.js's cleanup functions, removes the canvas element and performs WebGL's context cleanup. If you are running loopkit in a hot-reload environment, call the destroy function in the appropriate listener.
 
-# Loop / kit.loop
+# Loop
 
 accessed via kit.loop
 
 # Graphics
 
-So you don't have to specify colors in hex
+The `Graphics` class is a thin wrapper around [PIXI.Graphics](http://pixijs.download/release/docs/PIXI.Graphics.html). When creating your own custom sprites, use it instead of the Pixi's version. There is just a single difference between loopkit's graphics and Pixi's version - `lineStyle`, and `beginFill` accept colors in any format.
+
+> Use [LoopKit.graphics](#graphics) class if you want to draw directly on the surface.
 
 # Props
 
-Make experimentation much simpler
+### Props({props})
+
+-   **Usage:**<br />
+    Props is the container for reactive properties. In it you can define inter-dependent properties that will be smartly cached and recalculated on demand
+
+-   **Arguments:**
+
+    -   `{Object} props` - a key:value dictionary of initial props
+
+-   **Usage:**<br />
+    Use props to manage all parameters of your experiment in a single place. Put anything you want to parametrize in the props.
+    Props
+
+-   **Example:**
+    ```javascript
+    let props = Props({
+        // simple values
+        x: 100,
+        // dynamically calculated values, recalculated when dependencies change
+        angle: state => scale(state.c3a, 0, 359, 0, 5),
+        frames: state => scale(state.master, 300, 60, 60, 30),
+        echo: state => scale(state.c2b, 0, state.frames - 1, 32),
+    });
+    ```
+
+## Methods
+
+### Props.addWatcher(callback)
+
+### Props.removeWatcher(callback)
+
+### Props.getState()
+
+### Props.loadState({values})
+
+### Props.derived()
+
+### scale(val, min, max, defaultVal, step)
+
+-   **Arguments:**
+
+    -   `{float} val` - normalized (0..1) value
+    -   `{Number} min` - left side value of the scale, the one that will be returned when val == 0. Can be negative.
+    -   `{Number} max` - right side value of the scale, the one that will be returned when val == 1. Can be negative.
+    -   `{Number} defaultVal` - value to return when `val` is `Undefined`
+    -   `{Number} step` - step that the return value should be rounded to. Can be floats, e.g. round to increments of 0.1, as well as ints, e.g. round to increments of 30
+
+-   **Usage:**<br />
+    Use `scale` to convert a normalized value into any range. Using scale in tandem with props allows to change the parameter ranges quickly, without having to look for the right spot burried in the code.
+
+-   **Example:**
+
+    ```javascript
+    let props = Props({
+        // dynamically calculated values, recalculated when dependencies change
+        angle: state => scale(state.c3a, 0, 359, 0, 5),
+        edges: state => scale(state.c1, 3, 200, 200) + scale(state.c1a, 0, 8),
+        frames: state => scale(state.master, 300, 60, 60, 30),
+        echo: state => scale(state.c2b, 0, state.frames - 1, 32),
+    });
+    ```
 
 # Easing
 
-Makes things ease-y (i'll show myself out)
+Easing module contains all popular easing functions for quick conversion between a linear value and any of the easing ones.
+
+### Easing.linear(t)
+
+Returns the same value that was passed in.
+
+-   **Usage:**<br />
+    This function is handy when you need to temporarily turn easing off - easier to replace the easing function to linear, rather than rewriting the call.
+
+### Standard easing functions
+
+All of the functions below accept a normalized value t as input and return the translated value. For details on easing, see [What is easing?](/extra#what-is-easing) You can find graphs of all standard easing functions on https://easings.net/.
+
+-   Sine: `Easing.sineIn`, `Easing.sineOut`, `Easing.sineInOut`
+-   Quadratic: `Easing.quadIn`, `Easing.quadOut`, `Easing.quadInOut`
+-   Cubic: `Easing.cubicIn`, `Easing.cubicOut`, `Easing.cubicInOut`
+-   Quart: `Easing.quartIn`, `Easing.quartOut`, `Easing.quartInOut`
+-   Quint: `Easing.quintIn`, `Easing.quintOut`, `Easing.quintInOut`
+-   Exponential: `Easing.expoIn`, `Easing.expoOut`, `Easing.expoInOut`
+-   Circular: `Easing.circIn`, `Easing.circOut`, `Easing.circInOut`
+-   Back: `Easing.backIn`, `Easing.backOut`, `Easing.backInOut`
+-   Elastic: `Easing.elasticIn`, `Easing.elasticOut`, `Easing.elasticInOut`
+-   Bounce: `Easing.bounceIn`, `Easing.bounceOut`, `Easing.bounceInOut`
+
+### Functions from material design
+
+Functions snatched from [Material Design's motion chapter](https://material.io/design/motion/speed.html#easing)
+
+-   `Easing.material`,
+-   `Easing.materialDecelerated`,
+-   `Easing.materialAcelerated`
+
+### Easing.bezier(p1x, p1y, p2x, p2y)
+
+-   **Usage:**<br />
+    Roll your own easing function - takes in the bezier curve points and returns an easing function. Uses [BezierEasing](https://github.com/gre/bezier-easing#readme) module for it, so check out their docs.
+
+-   **Example:**<br />
+    ```javascript
+    let materialAccelerated = BezierEasing(0.4, 0, 1, 1),
+    ```
 
 # RC
 
-RC stands for remote(-ish) control.
+Use RC (short for Remote-ish Control) when you need to communicated two windows on the same machine rendering the same experiment.
+
+-   **Usage:**<br />
+    This can be useful if you are projecting one window to an external screen, but want to have a control interface in another.
+
+*   **Example:**<br />
+
+    RC works extra well in combination with Props, as you can broadcast result from [Props.getState](/props#propsgetstate) and then load it in the other windows using [Props.loadState](/props#propsloadstate)
+
+    ```javascript
+    const rc = new RC();
+
+    window.addEventListener("keydown", evt => {
+        if (evt.code == "ArrowRight") {
+            props.bpm += 1;
+        } else if (evt.code == "ArrowLeft") {
+            props.bpm -= 1;
+        }
+
+        // we are sending kit's frame as well to make sure that the other window
+        // renders the exact same thing we are rendering
+        rc.send({frame: kit.frame, props: props.derived()});
+    });
+
+    function onRemoteVars(data) {
+        kit.frame = data.frame;
+        Object.entries(data.props).forEach(([prop, val]) => {
+            props[prop] = val;
+        });
+        kit.render();
+    }
+    rc.addWatcher(onRemoteVars);
+
+    // start listening
+    rc.connect();
+    ```
+
+> Under the hood, RC uses [Broadcast Channel API](https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API) to locally communicate between windows of the same browser on the machine.
+
+## Methods
+
+### connect()
+
+-   **Usage:**<br />
+    Start listening to the local channel. The channel is locked to the browser path, so only windows with the same path will hear each other.
+
+### send(data)
+
+-   **Usage:**<br />
+    Broadcast data to all listeners
+
+### disconnect()
+
+-   **Usage:**<br />
+    Stop listening. Call this in your destruction procedure.
+
+### addWatcher(callback)
+
+-   **Arguments:**
+
+    -   `{Function} callback` - gets called when a message has been received.
+
+-   **Usage:**<br />
+    Update local state from the received data.
+
+### removeWatcher(callback)
+
+-   **Arguments:**
+
+    -   `{Function} callback` - callback that was previously passed into `addWatcher`
+
+-   **Usage:**<br />
+    Remove the callback from the list of callback to call when a new message comes in.
 
 # Sound
 
 When you want to react to sound
-
-```javascript
-import {LoopKit, Graphics} from "pixi-loopkit";
-let kit = new LoopKit(".kit", {
-    bgColor: "#fafafa",
-});
-
-let graphics = kit.graphics;
-graphics.lineStyle(3, "#666");
-graphics.drawRect(100.5, 100.5, 100, 100);
-```
-
-```javascript
-import {LoopKit, Graphics} from "pixi-loopkit";
-
-class Square extends Graphics {
-    constructor(x, y, w, h) {
-        super();
-        [this.x, this.y] = [x + w / 2, y + h / 2];
-
-        this.lineStyle(3, "#555");
-        this.drawRect(-w / 2, -h / 2, w, h);
-    }
-}
-
-let kit = new LoopKit(".kit", {
-    bgColor: "#fafafa",
-    onFrame: () => {
-        rect.rotation += 0.01;
-    },
-});
-
-let rect = new Square(100, 100, 100, 100);
-kit.addChild(rect);
-```
