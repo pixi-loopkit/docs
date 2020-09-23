@@ -6,11 +6,11 @@ slug: intro
 
 # What is pixi-loopkit
 
-Pixi-loopkit makes it simple to create looping gifs, visualisations that are timed to music, experiments that are easy to parametrize (more on that in props!), and all that in your browser and so mega-portable! It's a thin wrapper around [PIXI.js](https://pixijs.io/) with additional helper scripts and libraries, and it's a platform to create stuff.
+Pixi-loopkit makes it simple to create looping gifs, visualisations that are timed to music, experiments that are easy to parametrize (more on that in [props](/props)), and all that in your browser and so - totally portable. It's a thin wrapper around [PIXI.js](https://pixijs.io/) with additional helper scripts and libraries to help you focus on the making.
 
-This documentation is a cross between a guide and technical documentation. A how to do things in general, and how to do things in loopkit in specific. Have a look around and who knows, maybe you will have found your new home!
+This documentation is a part guide and part technical documentation. If you know where you're going - jump straight to the [reference](/reference). Otherwise, keep reading - there is lots of fun stuff to cover!
 
-> All the examples of code build on previous ones, and to keep things concise, stuff that has been explained earlier is not reiterated. If you get lost, just scroll up to previous sections and see if maybe it's explained there!
+> To keep things concise, all the code examples build on previous ones. If you get lost, just scroll up to the previous sections and see if maybe some of the other examples explain what's going on!
 
 # Install & Run
 
@@ -20,14 +20,14 @@ Loopkit is available on NPM:
 npm install pixi-loopkit
 ```
 
-Alternatively, you can download the minified version from github and just include that in your project (more info here later; right now though `npm` is the way to go).
+You can also download a minified version from github and include that in your project (more info here later; right now though `npm` is the way to go).
 
 # Barebones example
 
-Here's a minimal example to get us started. You should see a turquoise rectangle on the right.
+Here's a minimal example to get us started. You should see a turquoise rectangle on the right. Read the code comments for explanations.
 
 ```javascript
-// import loopkit, using ES6 imports
+// import loopkit with ES6 imports
 import {LoopKit} from "pixi-loopkit";
 
 // Create a new kit instance. The first param, ".kit" is the CSS selector
@@ -48,7 +48,7 @@ kit.graphics.drawRect(100, 100, 100, 100);
 
 Loopkit adds one essential feature to Pixi's graphics: you can specify colors in any format you like. All colors in loopkit are [chroma.js](https://gka.github.io/chroma.js/) colors, allowing you to use symbolic names (like "red", or "fuchsia"), HSL (hue, saturation, lightness) triplets, blending, and everything else. It's a rather excellent library, so be sure to check out [their documentation](https://gka.github.io/chroma.js/)!
 
-> Keyboard shortcut time! Click on the square above and then press the "p" button on your keyboard. You should be offered to download a capture of what you're seeing. Loopkit has a built-in exporter that will allow you get your work from code into PNGs and GIFs and MP4s in no time.
+> Keyboard shortcut time! Click on the square above and then press the "p" button on your keyboard. You should be offered to download a capture of what you're seeing. Loopkit has a built-in exporter that will allow you get your work from code into PNGs, GIFs, and MP4s in no time.
 
 ## Let's get moving
 
