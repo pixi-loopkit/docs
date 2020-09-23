@@ -55,7 +55,7 @@
                     source = lines.join("\n");
 
                     // point our universal kit, to uniquely generated random hash
-                    source = source.replace(/\.kit/g, `.demo-${id}`);
+                    source = source.replace(/"\.kit"/g, `".demo-${id}"`);
 
                     // add our local magic for usable demos
                     source = `
