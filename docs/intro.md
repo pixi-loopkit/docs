@@ -12,7 +12,7 @@ This documentation is a part guide and part technical documentation. If you know
 
 # Show me the code
 
-Code's in GitHub https://github.com/pixi-loopkit. Pull requests and improvement suggestions welcome!
+Code's in GitHub: https://github.com/pixi-loopkit/pixi-loopkit. Pull requests and improvement suggestions welcome!
 
 # Install & Run
 
