@@ -29,6 +29,7 @@ module.exports = function(api) {
 
         docs.forEach(doc => {
             let leaf = doc.path.split("/").slice(-2, -1)[0];
+            doc.leaf = leaf;
             doc.slug = doc.slug || leaf;
             createPage({
                 path: `/${doc.slug}`,

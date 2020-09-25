@@ -125,6 +125,14 @@
         <article>
             <header class="page-header">{{ doc.title }}</header>
             <div v-html="doc.content" />
+
+            <footer>
+                <p>
+                    Caught a mistake or want to contribute to the documentation?
+                    <a :href="`https://github.com/pixi-loopkit/docs/tree/master/docs/${doc.leaf}.md`"> Edit this on GitHub! </a>
+                </p>
+                <p>Deployed on <a href="https://www.netlify.com/">Netlify</a>.</p>
+            </footer>
         </article>
     </Layout>
 </template>

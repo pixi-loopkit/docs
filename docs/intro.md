@@ -12,6 +12,12 @@ This documentation is a part guide and part technical documentation. If you know
 
 > To keep things concise, all the code examples build on previous ones. If you get lost, just scroll up to the previous sections and see if maybe some of the other examples explain what's going on!
 
+
+# Show me the code
+
+Code's in GitHub https://github.com/pixi-loopkit. Pull requests and improvement suggestions welcome!
+
+
 # Install & Run
 
 Loopkit is available on NPM:
