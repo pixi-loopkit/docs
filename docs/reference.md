@@ -9,65 +9,65 @@ order: 500
 
 -   **Arguments:**
 
-    -   `{Element | string} container` - CSS selector or the actual DOM node to which loopkit should attach to. Loopkit will add a canvas element to the container.
-    -   `{Object} options`
-        -   `{Function} onFrame` - callback to call on each frame. The callback will receive `kit.graphics` as well as normalized version (0..1) of the current frame.
-        -   `{boolean} antialias` - Whether the scene should be antialiased. Defaults to `true`.
-        -   `{string | number | Object | Chroma.color} bgColor` - Background color of the scene.
-        -   `{number} frames` - number of frames in the loop. This determines the loop length.
-        -   `{boolean} debugKeystrokes` Adds a few handy keystrokes to canvas. Defaults to `true`.
-        -   `{number} bpm` - Beats per minute. When set, switches Loopkit's ticker to time-exact mode.
-        -   `{number} beatsPerLoop` - How many beats should count as one loop. Defaults to `1`
-        -   `{Function} onBeat` - gets called on each beat. The exact time will depend on `bpm` and `beatsPerLoop`.
-        -   `{string} name` - used only when creating export scripts to simplify file management
+    -   `{Element | string} container` - CSS selector or DOM node to which loopkit should attach to. Loopkit will add a canvas element to the container.
+    -   `{Object} options` - kit options.
 
 -   **Usage:**<br />
     Create a new instance of loopkit.
 
+-   **Options:**
+
+    -   **`{Function} onFrame(g, frame)`**<br />
+        If specified, the callback gets called when the frame is ready for drawing. This is the place to do calculations and redraw any graphics. The callback will receive [`kit.graphics`](#graphics) as the first param, and normalized version (0..1) of the current frame as the second param.
+
+    -   **`{boolean} antialias`**<br />
+        Whether the scene should be antialiased. Set to false if you are working on a pixelart project or don't want any smooshing to happen. Defaults to `true`.
+
+    -   **`{string | number | Array | Object | Chroma.color} bgColor`**<br />
+        Background color of the scene. Accepts any format that chroma.js supports. See [chroma.js reference](https://gka.github.io/chroma.js/#chroma) for details.
+
+    -   **`{number} frames`**<br />
+        How many frames should the loop have. This will have direct effect on how quickly the loop runs (the framerate will stay constant, but the change will happen faster). PIXI refresh rate is about 60 frames per second, so setting frames to 30 will result in a 0.5 second loop, while setting it to 180 - in a three second loop.
+
+    -   **`{boolean} debugKeystrokes`**<br />
+        Enabled by default, this attaches a few handy keystrokes to the scene:
+        -   `Spacebar` binds to [`.pause()`](#pause) and pauses/unpauses the loopkit.
+        -   `Left Arrow` binds to [`.loop.tick()`](#tick) and moves loop 10 frames back. `Shift + Left Arrow` will move the loop back 1 frame.
+        -   `Right Arrow` binds to [`.loop.tick()`](#tick) and moves loop 10 frames ahead. `Shift + Left Arrow` will move the loop 1 frame ahead.
+        -   `R` binds to [`.exportStill()`](#exportStill) and pauses the loopkit and renders all frames of the loop on top of each other.
+        -   `Shift+R` binds to `.exportStill()` and pauses the loopkit and renders all frames of the loop on top of each other, and exports the result as a PNG.
+        -   `Shift + E` binds to `.exportLoop()` and exports all frames of the loop as PNGs packed into a TAR archive.
+        -   `Shift + P` binds to `.pause()` and pauses/unpauses the loopkit.
+    -   **`{number} bpm`**<br />
+        Beats per minute. When set, switches Loopkit's ticker to time-exact mode. See below for more details.
+    -   **`{number} beatsPerLoop`**<br />
+        How many beats should count as one loop. Defaults to `1`
+    -   **`{Function} onBeat()`**<br />
+        Gets called on each beat. The exact time will depend on `bpm` and `beatsPerLoop`.
+    -   **`{string} name`**<br />
+        used only when creating export scripts to simplify file management
+
 *   **Example:**
 
-    ```js
+    ```javascript
     let kit = new LoopKit(".kit", {
         bgColor: "white",
+        frames: 120,
         onFrame: (g, frame) => {
             g.clear();
             g.lineStyle(1, "green");
-            g.drawRect(10, 10, 10 + frame * 100, 10 + frame * 100);
-        })
+            frame = Math.max(frame, 0.01);
+            g.drawRect(
+                kit.width / 2 - (frame * kit.width) / 2,
+                kit.height / 2 - (frame * kit.height) / 2,
+                frame * kit.width,
+                frame * kit.height
+            );
+        },
     });
     ```
 
--   **Option: onFrame**<br />
-    If specified, the callback gets called when the frame is ready for drawing. This is the right place to redraw any graphics. The callback will receive `kit.graphics` as the first param, and normalized version (0..1) of the current frame as the second param.
-
--   **Option: antialias**<br />
-    Set to false if you are working on a pixelart project or don't want any smooshing to happen
-
--   **Option: bgColor**<br />
-    bgColor accepts most formats you could think of
-
--   **Option: frames**<br />
-    The `frames` will affect the pace at which `frame` variable passed into `onFrame` will go from 0 to 1. PIXI refresh rate is about 60 frames per second, so setting frames to 30 will result in a 0.5 second loop, while setting it to 180 - in a three second loop.
--   **Option: debugKeystrokes**<br />
-    Enabled by default, this attaches a few handy keystrokes to the scene:
-    -   `Spacebar` binds to `.pause()` - pauses/unpauses the loopkit.
-    -   `Left Arrow` binds to `.loop.tick()` - moves loop 10 frames back. `Shift + Left Arrow` will move the loop back 1 frame.
-    -   `Right Arrow` binds to `.loop.tick()` - moves loop 10 frames ahead. `Shift + Left Arrow` will move the loop 1 frame ahead.
-    -   `R` binds to `.exportStill()` - pauses the loopkit and renders all frames of the loop on top of each other.
-    -   `Shift+R` binds to `.exportStill()` - pauses the loopkit and renders all frames of the loop on top of each other, and exports the result as a PNG.
-    -   `Shift + E` binds to `.exportLoop()` - exports all frames of the loop as PNGs packed into a TAR archive.
-    -   `Shift + P` binds to `.pause()` - pauses/unpauses the loopkit.
--   **Option: bpm**<br />
-
--   **Option: beatsPerLoop**<br />
--   **Option: onBeat**<br />
--   **Option: name**<br />
-
 ## Properties
-
-### container
-
-Pointer to the HTMLElement containing loopkit, in case you've lost the handle somehow.
 
 ### width
 
@@ -81,18 +81,18 @@ The current height of the canvas. Use it to determine placement for whatever you
 
 Kit's [HTMLCanvasElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement).
 
-> In modern browsers canvas is running in WebGL2 mode, so if you need to get access to the context, you should call `.canvas.getContext("webgl2")`
+> In modern browsers canvas is running in WebGL2 mode, so if you need to get access to the context, you can do `kit.canvas.getContext("webgl2")`
 
 ### loop
 
-Kit's looper. See [Loop](/reference#Loop).
+Kit's looper. Access it to reset the frame, or to get hands on the utility functions. See [Loop](#loop-1) for details.
 
 ### bpm
 
-Beats per minute. When specified, loopkit switches from sequential looping (meaning all frames will be renderer one after another, no matter how long it takes), to timer-based looping.
+Beats per minute. When specified, loopkit switches from sequential looping (meaning all frames will be renderer one after another, no matter how long it takes), to timer-based looping (meaning it will check how much time has passed since last frame, and figure out what frame we are on based on BPM).
 
 -   **Usage**:<br />
-    Set bpm when you want match the visuals to a particular beat.
+    Set bpm when you want match the visuals to a beat.
 -   **Details**:<br/>
     Thinking in frames, if you set bpm to 120, that amounts to 120/6 = 2 beats per second. PIXI renders 60 frames per second, so one beat will be half that, or 30 frames.
     In this example your loop will effectively be 30 frames long.
@@ -104,14 +104,14 @@ Beats per minute. When specified, loopkit switches from sequential looping (mean
 
 ### beatsPerLoop
 
-Current beatsPerLoop. Defaults to 1, and is not used, unless you have specified bpm.
+Current beatsPerLoop. Defaults to 1 and is not used unless you have specified bpm.
 
 -   **Usage**:<br />
-    See [`bpm`](/reference#bpm) for full explanation.
+    See [`bpm`](#bpm) for full explanation.
 
 ### beat
 
-Access to kit's Beat object. Not used, unless bpm is specified See [Beat](/reference#Beat).
+Access to kit's Beat object. Not used, unless bpm is specified See [Beat](#Beat).
 
 ### name
 
@@ -129,7 +129,7 @@ Access to PIXI.renderer. See [PIXI's documentation](http://pixijs.download/relea
 Current background color.
 
 -   **Usage**:<br />
-    You can change the background on the fly! Accepts all good colors.
+    Set to change the background color. Accepts any format that chroma.js supports. See [chroma.js reference](https://gka.github.io/chroma.js/#chroma) for details.
 
 ### graphics
 
@@ -158,7 +158,7 @@ A convenience shortcut to `.graphics.children`
 ### render()
 
 -   **Usage**:<br />
-    Call this whenever you need to redraw the frame. Takes no effect if loopkit is running.
+    Call this when loopkit is not running and you want to redraw a frame. Doesn't do anything if loopkit is running, so it's safe to run on key-strokes on any other input events.
 
 ### start()
 
@@ -200,33 +200,147 @@ A convenience shortcut to `.graphics.children`
 
 ### exportStill(filename, opacity)
 
--   **Arguments**:z
-
-    -   `{string} filename`
-    -   `{float} opacity`
-
 -   **Usage**:<br />
     Pauses loopkit, and renderers all frames on top of each other.
+-   **Arguments**:
+    -   `{string} filename` - filename to export under. Should end with `.png`.
+    -   `{float} opacity` - Opacity for each frame - controls how much next frames erase previous ones. Defaults to 0.2
 
 ### resize()
 
 -   **Usage**:<br />
-    Resizes loopkit to fit the container. Call if you have resized the container. By default elements like growing, but not shrinking. To avoid that, you can set container's size explicitly and set `overflow: hidden` in CSS.
+    Resizes loopkit to fit the container. Call if you have resized the container. By default elements like growing, but not shrinking so, to avoid that, you can set container's size explicitly and set `overflow: hidden` in CSS.
 
 ### destroy()
 
 -   **Usage**:<br />
-    Stops loopkit, removes any internal listeners, calls PIXI.js's cleanup functions, removes the canvas element and performs WebGL's context cleanup. If you are running loopkit in a hot-reload environment, call the destroy function in the appropriate listener.
+    Stops loopkit, removes any internal listeners, calls PIXI.js's cleanup functions, removes the canvas element and performs WebGL's context cleanup.
+
+    > If you are running loopkit in a hot-reload environment, call the destroy function in the appropriate listener.
 
 # Loop
 
-accessed via kit.loop
+Loop keeps track of the timeframe and offers a few helper functions that let you split the loop in smaller miniloops, control flow direction, and perform calculations with delays.
+
+> Normally you'll be accessing loop through loopkit, via [`LoopKit.loop`](#loop)
+
+### new Loop(frames)
+
+-   **Arguments:**
+
+    -   `{int} frames` - how many frames this loop will have. Can be changed on the fly later. Defaults to 120.
+
+-   **Usage:**<br />
+    Create a new instance of loop.
+
+## Properties
+
+### frame
+
+Current frame in normalized (0..1) form.
+
+### frameFull
+
+Current frame in integer form. E.g if there are 60 frames, frameFull will go from 0..59.
+
+### frames
+
+Total frames for the loop. You can change it on the go, and loopkit will try to maintain roughly the same frame position at moment of the change.
+
+### loops
+
+How many loops have we run since starting up. You can use this value to expand your experiment beyond a single loop. For example, a motion could be deterministic within a loop, but you could add extra change on top based on how many times the loop has run.
+
+# Methods
+
+### tick(frames)
+
+-   **Arguments:**
+
+    -   `{int} frames` - Optional - by how many frames should the loop advance. Specify negative value to step backwards in time. Defaults to 1.
+
+-   **Usage:**
+    Use `tick()` to control the flow of the loop. Internally, loopkit calls `.tick()` on each render frame.
+
+### delay(frames)
+
+Returns `frame` value from N frames back (or ahead, if `frames` is negative).
+
+> This function does not affect the loop itself, merely performs the calculations and returns the normalized value
+
+-   **Arguments:**
+    -   `{int} frames` - How many frames back (positive value) or ahead (negative value) are we going.
+-   **Usage:**
+    This will not affect the flow itself, but will return the normalized version of the frame if it would be delayed by N frames. This can be used to do draw ahead or behind the current frame to, for example, draw faded out outlines, or marking where the motion will go next.
+
+*   **Example:**
+
+    ```javascript
+    let kit = new LoopKit(".kit.big", {
+        frames: 120,
+        bgColor: "#eee",
+        onFrame: (g, frame) => {
+            g.clear();
+            let x = kit.width / 2;
+            let y = kit.height / 2;
+
+            // xOffset will move the circle back and forth using a sine function
+            let xOffset = frame => Math.sin(frame * Math.PI * 2) * (kit.width / 4);
+            let trail = 30;
+            for (let i = 0; i <= trail; i++) {
+                // center determines how close are we to the current frame (0..1)
+                let center = 1 - i / trail;
+                // Use opacity and thickness to fade out the trail
+                g.lineStyle(center * 3, "#666", center);
+
+                // Offset X by delay, and reduce the radius of the trailing circles
+                g.drawCircle(x + xOffset(kit.loop.delay(i)), y, 20 + center * 100);
+            }
+        },
+    });
+    ```
+
+    > The thing to note here is that our loop is fully deterministic, and after 120 frames it is back where it started!
+
+### zig(times)
+
+A helper function that splits the normalized 0..1 flow, into a see-saw motion, and returns `frame` from that situation.
+
+-   **Arguments:**
+    -   `{int} times` - How many times in the loop should we zig and zag back.
+-   **Usage:**
+    Over the lifecycle of a single loop, the `frame` value goes from 0 to 1. Zig allows to split this interval into several "zigs". At times=2, zig function, over the lifecycle of a single loop will go 0..1..0. At times=3, over the same interval it will go 0..1..0..1.
+    This way you can have several back and forth motions in a single loop.
+
+> This function does not affect the loop itself, merely performs the calculations and returns the normalized value.
+
+> Tip: zig works really good in tandem with [Easing functions](#easing)!
+
+### zigzag(times)
+
+Calls `zig` x `times` x 2, and so will always reach 1 in the end. Think: boomerang.
+
+### splitFrame(parts)
+
+> This function does not affect the loop itself, merely performs the calculations and returns the normalized value
+
+Splits frame into smaller buckets. So while frames goes 0..1, this will fill all the buckets one by one till all buckets are at 1. Here's an example of the buckets filling up over time:
+
+| frame      | 0         | 0.2         | 0.4         | 0.6         | 0.8         | 1         |
+| ---------- | --------- | ----------- | ----------- | ----------- | ----------- | --------- |
+| `parts(2)` | [0, 0]    | [0.4, 0]    | [0.8, 0]    | [1, 0.2]    | [1, 0.6]    | [1, 1]    |
+| `parts(3)` | [0, 0, 0] | [0.6, 0, 0] | [1, 0.2, 0] | [1, 0.8, 0] | [1, 1, 0.4] | [1, 1, 1] |
+
+### fullCircle(callback)
+
+Resets frame to 0 and runs through all frames, calling `callback` on each frame. Useful when you want to export all frames yourself.
 
 # Graphics
 
-The `Graphics` class is a thin wrapper around [PIXI.Graphics](http://pixijs.download/release/docs/PIXI.Graphics.html). When creating your own custom sprites, use it instead of the Pixi's version. There is just a single difference between loopkit's graphics and Pixi's version - `lineStyle`, and `beginFill` accept colors in any format.
+The `Graphics` class is a thin wrapper around [PIXI.Graphics](http://pixijs.download/release/docs/PIXI.Graphics.html) that overrides `lineStyle` and `beginFill` functions to accept any color chroma.js supports. For details see [chroma.js reference](https://gka.github.io/chroma.js/#chroma).
+Use this class instead of the Pixi's version when creating your own custom sprites
 
-> Use [LoopKit.graphics](#graphics) class if you want to draw directly on the surface.
+> Use the [LoopKit.graphics](#graphics) instance if you want to draw directly on the kit's surface, use the .
 
 # Props
 
@@ -259,13 +373,33 @@ The `Graphics` class is a thin wrapper around [PIXI.Graphics](http://pixijs.down
 
 ### Props.addWatcher(callback)
 
+-   **Arguments:**
+    -   `{function} callback` - callback to call
+-   **Usage:**<br />
+    -   Add a `callback` that should get called every time any of the props change.
+
 ### Props.removeWatcher(callback)
+
+-   **Arguments:**
+    -   `{function} callback` - callback to call
+-   **Usage:**<br />
+    -   Remove previously added `callback` from the list of callbacks to call on change.
 
 ### Props.getState()
 
+-   **Usage:**<br />
+    -   Get current state of props. This returns values for all props.
+
 ### Props.loadState({values})
 
+-   **Arguments:**
+    -   `{object} values` - a {key:value} object with all the prop values that have to be set.
+-   **Usage:**<br />
+    -   Set values for all passed in props.
+
 ### Props.derived()
+-   **Usage:**<br />
+    -   Get all props that have been calculated (derived) rather have static values. The derived props quite often are the ones with the functional meaning. A "c1" prop might correspond to a state of a slider, while "waveLength" that uses c1 to calculate wavelength, is the one that has the real meaning for the user.
 
 ### scale(val, min, max, defaultVal, step)
 

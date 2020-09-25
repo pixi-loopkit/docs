@@ -8,7 +8,7 @@
         "deploy": "netlify build && netlify deploy --prod"
     },
     "dependencies": {
-        "pixi-loopkit": "^0.1.19",
+        "pixi-loopkit": "^0.1.23",
         "gridsome": "^0.7.0",
         "@gridsome/remark-prismjs": "^0.4.0",
         "@gridsome/source-filesystem": "^0.6.2",
