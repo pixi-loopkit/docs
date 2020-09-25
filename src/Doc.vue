@@ -9,6 +9,7 @@
         data() {
             return {
                 demos: [],
+                scripts: [],
             };
         },
 
@@ -35,6 +36,11 @@
                     if (!source.match(/\.kit/g)) {
                         // not kit - nothing to do!
                         return;
+                    } else {
+                        let lines = source.split(/\n/g);
+                        // filter out imports as those are allowed only in modules
+                        lines = lines.filter(line => line.indexOf("import") != 0);
+                        source = lines.join("\n");
                     }
 
                     let container = document.createElement("div");
@@ -45,38 +51,39 @@
                     let id = Math.round(Math.random() * 999999).toString(36);
                     demoBox.classList.add(`demo-${id}`);
 
+                    if (source.indexOf(".kit.big") != -1) {
+                        container.classList.add("big");
+                    }
+
                     pre.replaceWith(container);
                     container.appendChild(demoBox);
                     container.appendChild(pre);
 
-                    let lines = source.split(/\n/g);
-                    // filter out imports as those are allowed only in modules
-                    lines = lines.filter(line => line.indexOf("import") != 0);
-                    source = lines.join("\n");
-
                     // point our universal kit, to uniquely generated random hash
                     source = source.replace(/"\.kit"/g, `".demo-${id}"`);
+                    source = source.replace(/"\.kit.big"/g, `".demo-${id}"`);
 
                     // add our local magic for usable demos
                     source = `
-                            function demo${id}() {
-                                ${source}
-                                kit.stop();
-                                let engaged = false;
-                                kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
-                                kit.canvas.addEventListener("mousedown", () => {
-                                    engaged = true;
-                                    kit.ticker.started ? kit.stop() : kit.start();
-                                });
+                                function demo${id}() {
+                                    ${source}
+                                    kit.stop();
+                                    let engaged = false;
+                                    kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
+                                    kit.canvas.addEventListener("mousedown", () => {
+                                        engaged = true;
+                                        kit.ticker.started ? kit.stop() : kit.start();
+                                    });
 
-                                // push into global so that we can destroy them properly once done
-                                window.demos.push(kit);
-                            }
-                            demo${id}();
-                        `;
+                                    // push into global so that we can destroy them properly once done
+                                    window.demos.push(kit);
+                                }
+                                demo${id}();
+                            `;
                     let script = document.createElement("script");
                     script.innerHTML = source;
                     document.body.appendChild(script);
+                    this.scripts.push(script);
                 });
             },
 
@@ -86,6 +93,10 @@
                     kit.destroy();
                 });
                 this.demos = [];
+                this.scripts.forEach(script => {
+                    document.body.removeChild(script);
+                });
+                this.scripts = [];
             },
         },
 
@@ -138,6 +149,16 @@
             canvas:focus {
                 outline: none;
                 // box-shadow: 0 0 0px 3px white, 0 0 0px 5px #aaa;
+            }
+        }
+
+        &.big {
+            display: flex;
+            flex-direction: column-reverse;
+            .demo {
+                position: relative;
+                width: 100%;
+                margin-top: 1em;
             }
         }
     }
