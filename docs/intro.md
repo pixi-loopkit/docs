@@ -10,13 +10,9 @@ Pixi-loopkit makes it simple to create looping gifs, visualisations that are tim
 
 This documentation is a part guide and part technical documentation. If you know where you're going - jump straight to the [reference](/reference). Otherwise, keep reading - there is lots of fun stuff to cover!
 
-> To keep things concise, all the code examples build on previous ones. If you get lost, just scroll up to the previous sections and see if maybe some of the other examples explain what's going on!
-
-
 # Show me the code
 
 Code's in GitHub https://github.com/pixi-loopkit. Pull requests and improvement suggestions welcome!
-
 
 # Install & Run
 
@@ -31,6 +27,8 @@ You can also download a minified version from github and include that in your pr
 # Barebones example
 
 Here's a minimal example to get us started. You should see a turquoise rectangle on the right. Read the code comments for explanations.
+
+> To keep things concise, all the code examples build on previous ones. If you get lost, just scroll up to the previous sections and see if maybe some of the other examples explain what's going on!
 
 ```javascript
 // import loopkit with ES6 imports
