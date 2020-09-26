@@ -5,6 +5,8 @@ order: 100
 
 # At a glance
 
+> NOTE: This section is still in works, so apologies for the mess!
+
 A large part of creating experimental stuff is the joy of switching away from the coding mode and into experimentation, where play comes in and anything goes. It's making something and then thinking "I wonder what if..." and then quickly making it happen and seeing it in action. This is where reactive properties come in: they allow you to keep the code sane while experimenting with the values.
 
 This first example is somewhat contrived, but try clicking into the square and use Left/Right arrow buttons to move around. You will notice that line width changes with the x position of the square.
