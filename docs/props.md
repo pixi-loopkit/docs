@@ -5,7 +5,7 @@ order: 100
 
 # At a glance
 
-> NOTE: This section is still in works, so apologies for the mess!
+> NOTE: This section is still in works. Apologies for the mess!
 
 A large part of creating experimental stuff is the joy of switching away from the coding mode and into experimentation, where play comes in and anything goes. It's making something and then thinking "I wonder what if..." and then quickly making it happen and seeing it in action. This is where reactive properties come in: they allow you to keep the code sane while experimenting with the values.
 
