@@ -12,13 +12,7 @@ body {
 }
 
 article {
-    max-width: $max-width;
-    margin: 0 auto;
-    padding-left: $nav-width + 30px;
-    padding-top: 30px;
-    padding-right: 20px;
     color: #333;
-    margin-bottom: 50px;
 
     p,
     ul,
@@ -148,5 +142,14 @@ article {
         margin-top: 80px;
         padding-top: 20px;
         border-top: 1px solid #aed9e0;
+    }
+
+
+    @media (max-width: 500px) {
+        font-size: 0.85em;
+
+        h1:not(:first-child) {
+            padding-top: 30px;
+        }
     }
 }

@@ -30,7 +30,6 @@ let kit = new LoopKit(".kit", {
 });
 
 kit.canvas.addEventListener("mousemove", evt => {
-    console.log(evt);
     props.mouseX = evt.offsetX;
 });
 ```

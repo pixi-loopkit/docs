@@ -1,3 +1,24 @@
+<static-query>
+query Menu {
+  nodes: allDoc {
+    edges {
+      node {
+        path
+        slug
+        title
+        order
+        headings {
+          value
+          anchor
+          depth
+        }
+      }
+    }
+  }
+}
+
+</static-query>
+
 <script>
     export default {
         metaInfo() {
@@ -10,6 +31,7 @@
             return {
                 demos: [],
                 scripts: [],
+                sections: [],
             };
         },
 
@@ -65,21 +87,23 @@
 
                     // add our local magic for usable demos
                     source = `
-                                function demo${id}() {
-                                    ${source}
-                                    kit.stop();
-                                    let engaged = false;
-                                    kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
-                                    kit.canvas.addEventListener("mousedown", () => {
-                                        engaged = true;
-                                        kit.ticker.started ? kit.stop() : kit.start();
-                                    });
+                                                function demo${id}() {
+                                                    ${source}
+                                                    kit.stop();
+                                                    let engaged = false;
+                                                    kit.canvas.addEventListener("mouseover", () => {if (!engaged) { kit.start()}});
+                                                    let onPointer = () => {
+                                                        engaged = true;
+                                                        kit.ticker.started ? kit.stop() : kit.start();
+                                                    }
+                                                    kit.canvas.addEventListener("mousedown", onPointer);
+                                                    kit.canvas.addEventListener("pointerdown", onPointer);
 
-                                    // push into global so that we can destroy them properly once done
-                                    window.demos.push(kit);
-                                }
-                                demo${id}();
-                            `;
+                                                    // push into global so that we can destroy them properly once done
+                                                    window.demos.push(kit);
+                                                }
+                                                demo${id}();
+                                            `;
                     let script = document.createElement("script");
                     script.innerHTML = source;
                     document.body.appendChild(script);
@@ -111,6 +135,30 @@
 
         mounted() {
             this.initDemos();
+
+            this.$static.nodes.edges.forEach(node => {
+                let doc = node.node;
+                let leaf = doc.path.split("/").slice(-2, -1)[0];
+                doc.slug = doc.slug || leaf;
+
+                let headings = [];
+                doc.headings.forEach(heading => {
+                    if (heading.depth == 1) {
+                        headings.push({
+                            title: heading.value,
+                            path: `/${doc.slug}${heading.anchor}`,
+                        });
+                    }
+                });
+                this.sections.push({
+                    order: doc.order,
+                    title: doc.title,
+                    slug: doc.slug,
+                    link: headings[0].path,
+                });
+            });
+
+            this.sections.sort((a, b) => a.order - b.order);
         },
 
         beforeDestroy() {
@@ -127,9 +175,17 @@
             <div v-html="doc.content" />
 
             <footer>
+                <nav>
+                    <g-link v-for="section in sections" :key="section.slug" :to="section.link.split('#')[0]">
+                        {{ section.title }}
+                    </g-link>
+                </nav>
+
                 <p>
                     Caught a mistake or want to contribute to the documentation?
-                    <a :href="`https://github.com/pixi-loopkit/docs/tree/master/docs/${doc.leaf}.md`"> Edit this on GitHub! </a>
+                    <a :href="`https://github.com/pixi-loopkit/docs/tree/master/docs/${doc.leaf}.md`">
+                        Edit this on GitHub!
+                    </a>
                 </p>
                 <p>Deployed on <a href="https://www.netlify.com/">Netlify</a>.</p>
             </footer>
@@ -167,6 +223,35 @@
                 position: relative;
                 width: 100%;
                 margin-top: 1em;
+            }
+        }
+    }
+
+    footer {
+        nav {
+            display: none;
+            border-bottom: 1px solid #aed9e0;
+            padding-bottom: 1em;
+            margin-bottom: 2em;
+            text-align: center;
+
+            a {
+                display: inline-block;
+                padding: 5px;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 750px) {
+            text-align: center;
+            nav {
+                display: block;
+                padding-left: 2em;
+                padding-right: 2em;
+            }
+            p {
+                padding: 0 2em;
             }
         }
     }
